@@ -19,15 +19,15 @@ No root. No Termux. Open source.
 
 <br>
 
-<img src="docs/screenshots/xcomb-home.png" width="168" alt="XComb home screen with yellow accents and agent tiles">&nbsp;
-<img src="docs/screenshots/xcomb-claude.png" width="168" alt="Claude Code running inside XComb">&nbsp;
-<img src="docs/screenshots/xcomb-codex.png" width="168" alt="OpenAI Codex running inside XComb">
+<img src="docs/screenshots/xcomb-home.jpg" width="168" alt="XComb home screen with the user, GitHub, device stats and six agent tiles">&nbsp;
+<img src="docs/screenshots/xcomb-onboarding.jpg" width="168" alt="XComb onboarding: coding agents in your pocket">&nbsp;
+<img src="docs/screenshots/xcomb-workspace.jpg" width="168" alt="XComb workspace file browser with copy to downloads">
 
 <br>
 
-<img src="docs/screenshots/xcomb-gemini.png" width="168" alt="Gemini CLI running inside XComb">&nbsp;
-<img src="docs/screenshots/xcomb-files.png" width="168" alt="XComb file browser with a copy to downloads action">&nbsp;
-<img src="docs/screenshots/xcomb-settings.png" width="168" alt="XComb settings with the yellow theme, security and remote access">
+<img src="docs/screenshots/xcomb-choose-linux.jpg" width="168" alt="XComb setup: choose Alpine or Debian">&nbsp;
+<img src="docs/screenshots/xcomb-create-user.jpg" width="168" alt="XComb setup: create a user and pick an avatar">&nbsp;
+<img src="docs/screenshots/xcomb-terminal-keys.jpg" width="168" alt="XComb setup: terminal key guide">
 
 </div>
 
