@@ -7,7 +7,7 @@ import {HarnessMark} from './harnessLogos';
 import {uiColors} from './palette';
 import {toolchainInstallLabel} from './toolchainLabels';
 
-export const XCOMB_ISSUES_URL = 'https://github.com/quitsaurabhverma2008-sketch/xcomb/issues/new';
+export const HORUS_ISSUES_URL = 'https://github.com/scarif-labs/horus/issues/new';
 
 export type AppExit = Readonly<{
   exitCode?: number;
@@ -77,7 +77,7 @@ export function appExitIssueUrl(
     '',
   ].join('\n');
   const query = `title=${encodeURIComponent(`${label} quit unexpectedly`)}&body=${encodeURIComponent(body)}`;
-  return `${XCOMB_ISSUES_URL}?${query}`;
+  return `${HORUS_ISSUES_URL}?${query}`;
 }
 
 type AppExitedOverlayProps = Readonly<{

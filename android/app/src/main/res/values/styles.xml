@@ -4,9 +4,9 @@
     <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="android:editTextBackground">@drawable/rn_edit_text_material</item>
-        <item name="android:windowBackground">@drawable/xcomb_splash_window</item>
-        <item name="android:statusBarColor">@color/xcomb_splash_background</item>
-        <item name="android:navigationBarColor">@color/xcomb_splash_background</item>
+        <item name="android:windowBackground">@drawable/horus_splash_window</item>
+        <item name="android:statusBarColor">@color/horus_splash_background</item>
+        <item name="android:navigationBarColor">@color/horus_splash_background</item>
         <item name="android:windowLightStatusBar">false</item>
     </style>
 

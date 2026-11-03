@@ -725,7 +725,7 @@ async function ensureDownloadsWritable(): Promise<boolean> {
 
 /**
  * Copies every regular file below a guest directory into the shared
- * Download/XComb/<folder>-<timestamp> folder. Native-only: the PTY fallback
+ * Download/Horus/<folder>-<timestamp> folder. Native-only: the PTY fallback
  * has no route to shared storage.
  */
 export async function exportGuestDirectory(

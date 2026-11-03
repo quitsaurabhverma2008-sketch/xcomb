@@ -4,6 +4,6 @@
         android:centerX="50%"
         android:centerY="44%"
         android:gradientRadius="82dp"
-        android:startColor="@color/xcomb_icon_gradient_center"
-        android:endColor="@color/xcomb_icon_gradient_edge" />
+        android:startColor="@color/horus_icon_gradient_center"
+        android:endColor="@color/horus_icon_gradient_edge" />
 </shape>

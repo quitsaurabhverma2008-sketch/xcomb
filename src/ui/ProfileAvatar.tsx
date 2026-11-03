@@ -17,15 +17,15 @@ const AVATAR_IMAGES: Readonly<Record<AvatarId, ImageSourcePropType>> = {
 
 /** Spoken names for screen readers. */
 export const AVATAR_LABELS: Readonly<Record<AvatarId, string>> = {
-  falcon: 'Nova',
-  ibis: 'Orbit',
-  jackal: 'Pulse',
-  cat: 'Prism',
-  cobra: 'Helix',
-  scarab: 'Grid',
-  lotus: 'Bloom',
-  papyrus: 'Wave',
-  'sun-disk': 'Solar',
+  falcon: 'Falcon',
+  ibis: 'Ibis',
+  jackal: 'Jackal',
+  cat: 'Cat',
+  cobra: 'Cobra',
+  scarab: 'Scarab',
+  lotus: 'Tiger',
+  papyrus: 'Wolf',
+  'sun-disk': 'Dragon',
 };
 
 type ProfileAvatarProps = Readonly<{

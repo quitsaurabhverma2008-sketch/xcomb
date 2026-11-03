@@ -11,7 +11,7 @@ type BrandMarkProps = Readonly<{accessible?: boolean; size?: number}>;
 export function BrandMark({accessible = true, size = 42}: BrandMarkProps): React.JSX.Element {
   return (
     <View accessible={accessible} accessibilityLabel={accessible ? 'XComb' : undefined} style={[styles.mark, {height: size, width: size}]}>
-      <Image source={require('./xcomb.png')} resizeMode="contain" style={[styles.markImage, {height: size, width: size}]} />
+      <Image source={require('./horus.png')} resizeMode="contain" style={[styles.markImage, {height: size, width: size}]} />
     </View>
   );
 }
