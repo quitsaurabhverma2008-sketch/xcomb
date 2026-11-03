@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="540" height="1095" viewBox="0 0 540 1095" role="img" aria-label="XComb settings screen with yellow theme, security and remote access options">
+  <rect width="540" height="1095" fill="#090807"/>
+  
+  <text x="18" y="26" fill="#F6F3E8" font-family="Fira Code" font-size="12" font-weight="700">9:41</text>
+  <g fill="#B9B29E">
+    <rect x="456" y="15" width="3" height="10" rx="1"/><rect x="461" y="12" width="3" height="13" rx="1"/>
+    <rect x="466" y="9" width="3" height="16" rx="1"/><rect x="471" y="6" width="3" height="19" rx="1"/>
+    <path d="M484 11c4-3 9-3 13 0M487 15c2-2 5-2 7 0M490 18c1-1 2-1 3 0" fill="none" stroke="#B9B29E" stroke-width="2" stroke-linecap="round"/>
+    <rect x="506" y="8" width="20" height="12" rx="3" fill="none" stroke="#B9B29E" stroke-width="1.5"/>
+    <rect x="509" y="11" width="14" height="6" rx="1" fill="#FFD23F"/>
+    <rect x="527" y="11" width="2" height="6" rx="1" fill="#B9B29E"/>
+  </g>
+  
+  <g transform="translate(22 44) scale(1)" fill="none" stroke="#FFD23F" stroke-linecap="round">
+    <path d="M2 2 L20 22" stroke-width="4"/>
+    <path d="M20 2 L2 22" stroke-width="4"/>
+    <path d="M2 28 v7 M6 28 v7 M10 28 v7 M14 28 v7 M18 28 v7" stroke-width="2.4"/>
+  </g>
+  <text x="74" y="65" fill="#B9B29E" font-family="Fira Code" font-size="10" letter-spacing=".7">XCOMB</text>
+  <text x="74" y="91" fill="#F6F3E8" font-family="Fira Code" font-size="21" font-weight="700">Settings</text>
+  <rect x="438" y="52" width="84" height="30" rx="7" fill="#11100B" stroke="#3B3527"/>
+  <text x="480" y="71" fill="#FFD23F" font-family="Fira Code" font-size="9" font-weight="700" text-anchor="middle">BACK</text>
+  <line x1="18" y1="104" x2="522" y2="104" stroke="#3B3527"/>
+  <text x="28" y="140" fill="#B9B29E" font-family="Fira Code" font-size="10" letter-spacing=".9">APPEARANCE</text>
+  <rect x="18" y="152" width="504" height="112" rx="12" fill="#11100B" stroke="#3B3527"/><text x="36" y="186" fill="#F6F3E8" font-family="Fira Code" font-size="12">Theme</text><text x="482" y="186" fill="#807A69" font-family="Fira Code" font-size="11" text-anchor="end">XComb Yellow</text><text x="508" y="186" fill="#807A69" font-family="Fira Code" font-size="16" text-anchor="end">›</text><line x1="34" y1="208" x2="506" y2="208" stroke="#292516"/><text x="36" y="242" fill="#F6F3E8" font-family="Fira Code" font-size="12">Text size</text><text x="482" y="242" fill="#807A69" font-family="Fira Code" font-size="11" text-anchor="end">Medium</text><text x="508" y="242" fill="#807A69" font-family="Fira Code" font-size="16" text-anchor="end">›</text>
+  <text x="28" y="292" fill="#B9B29E" font-family="Fira Code" font-size="10" letter-spacing=".9">TERMINAL</text>
+  <rect x="18" y="304" width="504" height="168" rx="12" fill="#11100B" stroke="#3B3527"/><text x="36" y="338" fill="#F6F3E8" font-family="Fira Code" font-size="12">Key bar</text><rect x="460" y="321" width="44" height="24" rx="12" fill="#FFD23F"/><circle cx="493" cy="333" r="9" fill="#0B0903"/><line x1="34" y1="360" x2="506" y2="360" stroke="#292516"/><text x="36" y="394" fill="#F6F3E8" font-family="Fira Code" font-size="12">Haptics</text><rect x="460" y="377" width="44" height="24" rx="12" fill="#FFD23F"/><circle cx="493" cy="389" r="9" fill="#0B0903"/><line x1="34" y1="416" x2="506" y2="416" stroke="#292516"/><text x="36" y="450" fill="#F6F3E8" font-family="Fira Code" font-size="12">Scrollback</text><text x="482" y="450" fill="#807A69" font-family="Fira Code" font-size="11" text-anchor="end">5,000 lines</text><text x="508" y="450" fill="#807A69" font-family="Fira Code" font-size="16" text-anchor="end">›</text>
+  <text x="28" y="500" fill="#B9B29E" font-family="Fira Code" font-size="10" letter-spacing=".9">SECURITY</text>
+  <rect x="18" y="512" width="504" height="112" rx="12" fill="#11100B" stroke="#3B3527"/><text x="36" y="546" fill="#F6F3E8" font-family="Fira Code" font-size="12">App lock</text><rect x="460" y="529" width="44" height="24" rx="12" fill="#FFD23F"/><circle cx="493" cy="541" r="9" fill="#0B0903"/><line x1="34" y1="568" x2="506" y2="568" stroke="#292516"/><text x="36" y="602" fill="#F6F3E8" font-family="Fira Code" font-size="12">Lock after</text><text x="482" y="602" fill="#807A69" font-family="Fira Code" font-size="11" text-anchor="end">15 minutes</text><text x="508" y="602" fill="#807A69" font-family="Fira Code" font-size="16" text-anchor="end">›</text>
+  <text x="28" y="652" fill="#B9B29E" font-family="Fira Code" font-size="10" letter-spacing=".9">REMOTE ACCESS</text>
+  <rect x="18" y="664" width="504" height="112" rx="12" fill="#11100B" stroke="#3B3527"/><text x="36" y="698" fill="#F6F3E8" font-family="Fira Code" font-size="12">Status</text><text x="504" y="698" fill="#807A69" font-family="Fira Code" font-size="11" text-anchor="end">Off</text><line x1="34" y1="720" x2="506" y2="720" stroke="#292516"/><text x="36" y="754" fill="#F6F3E8" font-family="Fira Code" font-size="12">Pair a computer</text><text x="482" y="754" fill="#807A69" font-family="Fira Code" font-size="11" text-anchor="end"></text><text x="508" y="754" fill="#807A69" font-family="Fira Code" font-size="16" text-anchor="end">›</text>
+  <text x="28" y="804" fill="#B9B29E" font-family="Fira Code" font-size="10" letter-spacing=".9">ABOUT</text>
+  <rect x="18" y="816" width="504" height="112" rx="12" fill="#11100B" stroke="#3B3527"/><text x="36" y="850" fill="#F6F3E8" font-family="Fira Code" font-size="12">Version</text><text x="504" y="850" fill="#807A69" font-family="Fira Code" font-size="11" text-anchor="end">1.1.1 (7)</text><line x1="34" y1="872" x2="506" y2="872" stroke="#292516"/><text x="36" y="906" fill="#F6F3E8" font-family="Fira Code" font-size="12">Licenses</text><text x="482" y="906" fill="#807A69" font-family="Fira Code" font-size="11" text-anchor="end"></text><text x="508" y="906" fill="#807A69" font-family="Fira Code" font-size="16" text-anchor="end">›</text>
+  <text x="270" y="952" fill="#3B3527" font-family="Fira Code" font-size="9" text-anchor="middle" letter-spacing=".3">XComb · Linux coding agents on Android</text>
+  <text x="270" y="1072" fill="#3B3527" font-family="Fira Code" font-size="9" text-anchor="middle" letter-spacing="1.4">REAL LINUX · NO ROOT · ARM64</text>
+</svg>

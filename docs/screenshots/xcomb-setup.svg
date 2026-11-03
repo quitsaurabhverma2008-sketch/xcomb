@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="540" height="1095" viewBox="0 0 540 1095" role="img" aria-label="XComb first-run screen to create a Linux user">
+  <rect width="540" height="1095" fill="#090807"/>
+  
+  <text x="18" y="26" fill="#F6F3E8" font-family="Fira Code" font-size="12" font-weight="700">9:41</text>
+  <g fill="#B9B29E">
+    <rect x="456" y="15" width="3" height="10" rx="1"/><rect x="461" y="12" width="3" height="13" rx="1"/>
+    <rect x="466" y="9" width="3" height="16" rx="1"/><rect x="471" y="6" width="3" height="19" rx="1"/>
+    <path d="M484 11c4-3 9-3 13 0M487 15c2-2 5-2 7 0M490 18c1-1 2-1 3 0" fill="none" stroke="#B9B29E" stroke-width="2" stroke-linecap="round"/>
+    <rect x="506" y="8" width="20" height="12" rx="3" fill="none" stroke="#B9B29E" stroke-width="1.5"/>
+    <rect x="509" y="11" width="14" height="6" rx="1" fill="#FFD23F"/>
+    <rect x="527" y="11" width="2" height="6" rx="1" fill="#B9B29E"/>
+  </g>
+  <g transform="translate(246 96) scale(2.4)" fill="none" stroke="#FFD23F" stroke-linecap="round">
+    <path d="M2 2 L20 22" stroke-width="4"/>
+    <path d="M20 2 L2 22" stroke-width="4"/>
+    <path d="M2 28 v7 M6 28 v7 M10 28 v7 M14 28 v7 M18 28 v7" stroke-width="2.4"/>
+  </g>
+  <text x="270" y="260" fill="#F6F3E8" font-family="Michroma" font-size="26" text-anchor="middle" letter-spacing="4">XCOMB</text>
+  <text x="270" y="318" fill="#F6F3E8" font-family="Fira Code" font-size="20" font-weight="700" text-anchor="middle">Create your Linux user</text>
+  <text x="270" y="344" fill="#FFD23F" font-family="Fira Code" font-size="9" text-anchor="middle" letter-spacing="1.2">STEP 1 OF 3</text>
+
+  <rect x="18" y="386" width="504" height="268" rx="13" fill="#11100B" stroke="#3B3527"/>
+  <text x="36" y="420" fill="#807A69" font-family="Fira Code" font-size="9" letter-spacing=".8">USERNAME</text>
+  <rect x="36" y="432" width="468" height="54" rx="10" fill="#171208" stroke="#FFD23F"/>
+  <text x="54" y="466" fill="#F6F3E8" font-family="Fira Code" font-size="16">vishesh</text>
+  <rect x="440" y="448" width="7" height="22" fill="#FFD23F"/>
+  <text x="36" y="514" fill="#807A69" font-family="Fira Code" font-size="9">Lowercase letters, numbers, and dashes.</text>
+  <text x="36" y="566" fill="#807A69" font-family="Fira Code" font-size="9" letter-spacing=".8">APP PASSWORD</text>
+  <rect x="36" y="578" width="468" height="54" rx="10" fill="#171208" stroke="#3B3527"/>
+  <text x="54" y="612" fill="#B9B29E" font-family="Fira Code" font-size="18" letter-spacing="2">••••••••</text>
+  <text x="36" y="648" fill="#807A69" font-family="Fira Code" font-size="9">Optional. Locks XComb after 15 minutes in the background.</text>
+
+  <rect x="18" y="676" width="504" height="110" rx="13" fill="#0C0B07" stroke="#3B3527"/>
+  <text x="36" y="708" fill="#F6F3E8" font-family="Fira Code" font-size="12" font-weight="700">Your workspace lives on this phone.</text>
+  <text x="36" y="732" fill="#B9B29E" font-family="Fira Code" font-size="10">Alpine Linux is unpacked into app storage and</text>
+  <text x="36" y="750" fill="#B9B29E" font-family="Fira Code" font-size="10">verified before it runs. No root required.</text>
+  <text x="36" y="770" fill="#807A69" font-family="Fira Code" font-size="9">You can add more users later.</text>
+
+  <rect x="18" y="820" width="504" height="58" rx="12" fill="#FFD23F"/>
+  <text x="270" y="855" fill="#0B0903" font-family="Fira Code" font-size="11" font-weight="700" text-anchor="middle" letter-spacing=".6">CREATE WORKSPACE</text>
+  <text x="270" y="910" fill="#807A69" font-family="Fira Code" font-size="9" text-anchor="middle">Takes about a minute on first launch</text>
+  <text x="270" y="1072" fill="#3B3527" font-family="Fira Code" font-size="9" text-anchor="middle" letter-spacing="1.4">REAL LINUX · NO ROOT · ARM64</text>
+</svg>
