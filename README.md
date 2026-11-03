@@ -75,7 +75,7 @@ stay inside each CLI; XComb never handles provider passwords.
 ### Download the APK
 
 1. Open the [latest release](https://github.com/quitsaurabhverma2008-sketch/xcomb/releases/latest).
-2. Download **`XComb-1.1.1.apk`**.
+2. Download **`XComb-1.2.0.apk`**.
 3. **Uninstall any older build first.** CI builds are signed with a per-run
    throwaway key, so Android refuses to update an app signed by another key.
    Export anything you need from `/workspace` before uninstalling.
@@ -264,7 +264,7 @@ hide a buildable APK.
 | :-- | :-- |
 | App label | **XComb** |
 | Application ID | Unchanged from the MIT-licensed fork base — declared in [`android/app/build.gradle`](android/app/build.gradle) |
-| Version | `1.1.1` (versionCode `7`) |
+| Version | `1.2.0` (versionCode `8`) |
 | ABI | `arm64-v8a` only |
 | Min / target SDK | 24 / 36 |
 | Source | <https://github.com/quitsaurabhverma2008-sketch/xcomb> |

@@ -3,7 +3,7 @@ import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import type {TerminalToolchainTarget} from '../native/NativeTerminalRuntime';
 import {InteractivePressable as Pressable} from '../ui/InteractivePressable';
 import {UI_FONT_FAMILY} from '../ui/typography';
-import {HORUS_ISSUES_URL} from './AppExitedOverlay';
+import {XCOMB_ISSUES_URL} from './AppExitedOverlay';
 import {HarnessMark} from './harnessLogos';
 import {installFailureCopy, installFailureDetails, type InstallFailure} from './installFailure';
 import {uiColors} from './palette';
@@ -36,7 +36,7 @@ export function installFailureIssueUrl(
     '',
   ].join('\n');
   const query = `title=${encodeURIComponent(`${label} install failed`)}&body=${encodeURIComponent(body)}`;
-  return `${HORUS_ISSUES_URL}?${query}`;
+  return `${XCOMB_ISSUES_URL}?${query}`;
 }
 
 type InstallFailedOverlayProps = Readonly<{

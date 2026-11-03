@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="XComb mark">
+  <defs>
+    <linearGradient id="gold" x1="86" y1="70" x2="438" y2="472" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFE983"/>
+      <stop offset="0.44" stop-color="#FFD23F"/>
+      <stop offset="1" stop-color="#F5A800"/>
+    </linearGradient>
+  </defs>
+  <g fill="none" stroke="url(#gold)" stroke-linecap="round" stroke-linejoin="round" stroke-width="54">
+    <path d="M124 108 320 318"/>
+    <path d="M320 108 124 318"/>
+  </g>
+  <g fill="url(#gold)">
+    <rect x="112" y="371" width="240" height="30" rx="11"/>
+    <rect x="132" y="397" width="21" height="66" rx="8"/>
+    <rect x="181" y="397" width="21" height="66" rx="8"/>
+    <rect x="230" y="397" width="21" height="66" rx="8"/>
+    <rect x="279" y="397" width="21" height="66" rx="8"/>
+    <rect x="328" y="397" width="21" height="66" rx="8"/>
+  </g>
+</svg>

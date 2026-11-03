@@ -1,0 +1,4 @@
+- Fresh XComb mark inside the app, on the launcher icon and on the splash screen
+- New geometric XComb avatar set (Nova, Orbit, Pulse, Prism, Helix, Grid, Bloom, Wave, Solar)
+- XComb issue links now point at this repository
+- Store screenshots refreshed from the 1.2.0 build
