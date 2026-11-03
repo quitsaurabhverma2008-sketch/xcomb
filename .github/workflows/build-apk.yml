@@ -1,0 +1,66 @@
+name: Build XComb APK
+
+# Manual build of an installable APK. Release builds are unsigned by default
+# (F-Droid signs its own), so this signs with a throwaway key made per run.
+# Debug builds are not used: React Native debug builds load JS from Metro.
+on:
+  workflow_dispatch:
+  push:
+    branches: [xcomb-update]
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  apk:
+    name: Signed release APK
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          submodules: recursive
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@be39fa834029ff78f1a44aa3bb0819b8fc2bd8fd # v4.0.4
+        with:
+          packages: platform-tools
+          log-accepted-android-sdk-licenses: false
+      - name: Install repository toolchain
+        run: sdkmanager 'platforms;android-37.0' 'build-tools;37.0.0' 'ndk;27.1.12297006' 'cmake;3.22.1'
+      - uses: gradle/actions/setup-gradle@0723195856401067f7a2779048b490ace7a47d7c # v5
+        with:
+          cache-read-only: true
+      - run: npm ci --no-audit --no-fund
+      - name: Typecheck and unit tests
+        run: |
+          npm run typecheck
+          npx jest --runInBand
+      - name: Make a throwaway signing key
+        run: |
+          keytool -genkeypair -v -keystore "$RUNNER_TEMP/xcomb.jks" -storepass xcombpass -keypass xcombpass \
+            -alias xcomb -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=XComb"
+      - name: Build signed release APK
+        working-directory: android
+        run: |
+          ./gradlew :app:assembleRelease --no-daemon --stacktrace --max-workers=2 \
+            -Phorus.releaseStoreFile="$RUNNER_TEMP/xcomb.jks" \
+            -Phorus.releaseStorePassword=xcombpass \
+            -Phorus.releaseKeyAlias=xcomb \
+            -Phorus.releaseKeyPassword=xcombpass
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: xcomb-apk
+          path: android/app/build/outputs/apk/release/*.apk
+          if-no-files-found: error

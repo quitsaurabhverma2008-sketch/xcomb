@@ -1,0 +1,31 @@
+import type {ProvisioningDiagnostics} from '../terminal/provisioningDiagnostics';
+import {provisionAlpineToolchain} from '../terminal/runtimeStatus';
+import {saveUserProfile, type NewProfileUser} from './profileStore';
+
+export type OnboardingSetupOutcome =
+  | Readonly<{kind: 'success'}>
+  | Readonly<{kind: 'error'; stage: 'alpine-tools' | 'profile'; errorCode?: string; diagnostics?: ProvisioningDiagnostics}>;
+
+export type OnboardingSetupOptions = Readonly<{
+  onToolsReady?: () => void;
+  /**
+   * Saves the profile without the shell's Alpine tools, e.g. offline after
+   * importing the rootfs. The first terminal installs them instead.
+   */
+  skipTools?: boolean;
+}>;
+
+/** Installs the profile shell's Alpine tools before onboarding is complete. */
+export async function setupOnboardingProfile(
+  user: NewProfileUser,
+  requestId: string,
+  {onToolsReady = () => undefined, skipTools = false}: OnboardingSetupOptions = {},
+): Promise<OnboardingSetupOutcome> {
+  if (!skipTools) {
+    const tools = await provisionAlpineToolchain(requestId, 'shell');
+    if (tools.kind !== 'success') return {kind: 'error', stage: 'alpine-tools', errorCode: tools.errorCode, ...(tools.diagnostics === undefined ? {} : {diagnostics: tools.diagnostics})};
+  }
+  onToolsReady();
+  if ((await saveUserProfile(user)).kind !== 'success') return {kind: 'error', stage: 'profile'};
+  return {kind: 'success'};
+}

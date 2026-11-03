@@ -1,0 +1,82 @@
+import {provisionAlpineToolchain} from '../src/terminal/runtimeStatus';
+import {saveUserProfile} from '../src/profile/profileStore';
+import {setupOnboardingProfile} from '../src/profile/onboardingSetup';
+
+jest.mock('../src/terminal/runtimeStatus', () => ({
+  provisionAlpineToolchain: jest.fn(),
+}));
+
+jest.mock('../src/profile/profileStore', () => ({
+  saveUserProfile: jest.fn(),
+}));
+
+const USER = {distro: 'alpine', username: 'horus', avatar: 'falcon', password: 'test-password'} as const;
+
+describe('setupOnboardingProfile', () => {
+  const provision = jest.mocked(provisionAlpineToolchain);
+  const save = jest.mocked(saveUserProfile);
+
+  beforeEach(() => {
+    provision.mockReset();
+    save.mockReset();
+  });
+
+  test('prepares the Alpine shell before saving the profile', async () => {
+    const order: string[] = [];
+    provision.mockImplementation(async (requestId, target) => {
+      order.push(`provision:${target}:${requestId}`);
+      return {kind: 'success', requestId};
+    });
+    save.mockImplementation(async () => {
+      order.push('save-profile');
+      return {kind: 'success'};
+    });
+
+    const result = await setupOnboardingProfile(USER, 'setup-shell-1');
+
+    expect(result).toEqual({kind: 'success'});
+    expect(order).toEqual(['provision:shell:setup-shell-1', 'save-profile']);
+  });
+
+  test('does not complete onboarding when Alpine package setup fails', async () => {
+    provision.mockResolvedValue({
+      kind: 'error',
+      requestId: 'setup-shell-2',
+      errorCode: 'internal_error',
+    });
+
+    const result = await setupOnboardingProfile(USER, 'setup-shell-2');
+
+    expect(result).toEqual({kind: 'error', stage: 'alpine-tools', errorCode: 'internal_error'});
+    expect(save).not.toHaveBeenCalled();
+  });
+
+  test('retains diagnostic metadata without saving a profile or reporting tools ready', async () => {
+    const diagnostics = {outcome: 'failed', stage: 'apk_failed', exitCode: 23, commandExitCode: 7, log: 'No space left on device.'} as const;
+    provision.mockResolvedValue({kind: 'error', requestId: 'setup-failure', errorCode: 'toolchain_install_failed', diagnostics});
+    const onToolsReady = jest.fn();
+    expect(await setupOnboardingProfile(USER, 'setup-failure', {onToolsReady})).toEqual({kind: 'error', stage: 'alpine-tools', errorCode: 'toolchain_install_failed', diagnostics});
+    expect(onToolsReady).not.toHaveBeenCalled();
+    expect(save).not.toHaveBeenCalled();
+  });
+
+  test('reports profile persistence failure after tools are ready', async () => {
+    provision.mockResolvedValue({kind: 'success', requestId: 'setup-shell-3'});
+    save.mockResolvedValue({kind: 'error', code: 'internal_error'});
+
+    const result = await setupOnboardingProfile(USER, 'setup-shell-3');
+
+    expect(result).toEqual({kind: 'error', stage: 'profile'});
+  });
+
+  test('saves the profile without tools when asked to skip them', async () => {
+    save.mockResolvedValue({kind: 'success'});
+    const onToolsReady = jest.fn();
+
+    const result = await setupOnboardingProfile(USER, 'setup-shell-4', {onToolsReady, skipTools: true});
+
+    expect(result).toEqual({kind: 'success'});
+    expect(provision).not.toHaveBeenCalled();
+    expect(onToolsReady).toHaveBeenCalledTimes(1);
+  });
+});
