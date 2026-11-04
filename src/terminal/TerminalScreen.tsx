@@ -41,6 +41,7 @@ import {BrandMark} from './BrandMark';
 import {toolchainInstallLabel} from './toolchainLabels';
 import {nextRequestId} from './terminalRequestId';
 import {InteractivePressable as Pressable} from '../ui/InteractivePressable';
+import {BrowserPane} from './BrowserPane';
 import {uiColors} from './palette';
 import {InstallProgressOverlay, installStepForStage, lastDownloadProgress, lastInstallStage} from './InstallProgressOverlay';
 import {SessionLimitOverlay} from './SessionLimitOverlay';
@@ -187,11 +188,18 @@ function hasVisibleTerminalContent(frame: TerminalFrame): boolean {
 type TerminalHeaderProps = Readonly<{
   onBack?: () => void;
   onHome?: () => void;
+  onBrowser?: () => void;
+  browserOpen?: boolean;
 }>;
 
-const TerminalHeader = React.memo(function TerminalHeaderView({onBack, onHome}: TerminalHeaderProps): React.JSX.Element {
+const TerminalHeader = React.memo(function TerminalHeaderView({onBack, onHome, onBrowser, browserOpen = false}: TerminalHeaderProps): React.JSX.Element {
   return (
     <View pointerEvents="box-none" style={styles.floatingHeader} testID="terminal-floating-header">
+      {onBrowser !== undefined ? (
+        <Pressable accessibilityLabel={browserOpen ? 'Close browser' : 'Open browser'} accessibilityRole="button" onPress={onBrowser} style={[styles.floatingGroup, browserOpen && styles.browserButtonActive]} testID="terminal-browser-toggle">
+          <Text style={styles.browserButtonText}>🌐 BROWSER</Text>
+        </Pressable>
+      ) : <View />}
       {(onHome ?? onBack) !== undefined ? (
         <Pressable accessibilityLabel="Back to home" accessibilityRole="button" onPress={onHome ?? onBack} style={styles.floatingGroup} testID="terminal-home">
           <BrandMark accessible={false} size={28} />
@@ -208,6 +216,9 @@ export function TerminalScreen({client: providedClient, runtime = undefined, onB
   const viewportRef = React.useRef(viewport);
   const pendingViewportRef = React.useRef<TerminalViewport | undefined>(undefined);
   const viewportTimerRef = React.useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  // Split screen: the browser takes the top half and the terminal keeps running below.
+  const [browserOpen, setBrowserOpen] = React.useState(false);
+  const toggleBrowser = React.useCallback(() => setBrowserOpen(open => !open), []);
   const [cellWidth, setCellWidth] = React.useState(8);
   const [cellWidthMeasured, setCellWidthMeasured] = React.useState(false);
   const measureCellWidth = React.useCallback((width: number) => {
@@ -1138,8 +1149,9 @@ export function TerminalScreen({client: providedClient, runtime = undefined, onB
     <>
       <StatusBar barStyle="light-content" />
       <View style={styles.safeArea} testID="terminal-screen">
+        {browserOpen ? <BrowserPane onClose={toggleBrowser} /> : null}
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={0} style={styles.keyboardRoot}>
-          <TerminalHeader onBack={onBack} onHome={onHome} />
+          <TerminalHeader browserOpen={browserOpen} onBack={onBack} onBrowser={toggleBrowser} onHome={onHome} />
 
           <View onLayout={handleOutputLayout} style={styles.output}>
             <TerminalGrid
@@ -1292,7 +1304,9 @@ export function TerminalScreen({client: providedClient, runtime = undefined, onB
 const styles = StyleSheet.create({
   safeArea: {backgroundColor: TERMINAL_BACKGROUND, flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight ?? 0 : 0},
   keyboardRoot: {flex: 1},
-  floatingHeader: {alignItems: 'center', flexDirection: 'row', justifyContent: 'flex-end', left: 0, paddingHorizontal: 12, position: 'absolute', right: 0, top: 8, zIndex: 10},
+  browserButtonText: {color: uiColors.accent, fontFamily: UI_FONT_FAMILY, fontSize: 11, fontWeight: '800', includeFontPadding: false, letterSpacing: 0.6, paddingHorizontal: 10},
+  browserButtonActive: {backgroundColor: uiColors.accentSurface, borderColor: uiColors.accent, borderWidth: 1},
+  floatingHeader: {alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', left: 0, paddingHorizontal: 12, position: 'absolute', right: 0, top: 8, zIndex: 10},
   floatingGroup: {alignItems: 'center', borderColor: 'rgba(48, 56, 59, 0.65)', borderRadius: 22, borderWidth: 1, flexDirection: 'row', height: 44, justifyContent: 'center', paddingHorizontal: 5},
   menuArrowText: {color: uiColors.accent, fontFamily: UI_FONT_FAMILY, fontSize: 20, fontWeight: '800', includeFontPadding: false, lineHeight: 22, textAlign: 'center', width: 34},
   output: {backgroundColor: TERMINAL_BACKGROUND, flex: 1, overflow: 'hidden'},
