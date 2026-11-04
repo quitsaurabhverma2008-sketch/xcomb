@@ -21,7 +21,7 @@ type TerminalCopyOverlayProps = Readonly<{
  */
 export function TerminalCopyOverlay({text, onClose, onCopyAll}: TerminalCopyOverlayProps): React.JSX.Element {
   const [copied, setCopied] = React.useState<'idle' | 'done' | 'failed'>('idle');
-  const scrollRef = React.useRef<ScrollView>(null);
+  const scrollRef = React.useRef<React.ElementRef<typeof ScrollView>>(null);
   // Back closes this view first instead of leaving the terminal.
   React.useEffect(() => {
     const subscription = BackHandler.addEventListener('hardwareBackPress', () => {

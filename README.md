@@ -48,7 +48,8 @@ sandbox, with a warm black and yellow interface built for a touch screen.
 | | |
 | :-- | :-- |
 | **Real Linux** | Alpine Linux ARM64, unpacked from a pinned minirootfs and checked against SHA-256 before it runs. `git`, `curl`, `jq`, `rg`, `python3`, Node and `apk add` work like a normal box. |
-| **A terminal that behaves** | Native PTY and renderer with resize, Ctrl-C, and job control. The key bar adds Esc, Tab, arrows, paste, and sticky Ctrl/Alt for everything a phone keyboard leaves out. |
+| **A terminal that behaves** | Native PTY and renderer with resize, Ctrl-C, and job control. The key bar adds Esc, Tab, arrows, paste, and sticky Ctrl/Alt for everything a phone keyboard leaves out. Select text with the COPY key or a long-press. |
+| **A split-screen browser** | Tap **BROWSER** in the terminal to open an in-app WebView above the shell, ready for `localhost` dev servers. |
 | **Five agents, one tap** | Claude Code, Codex, OpenCode, Gemini CLI and FreeBuff each install on first open, with the installer output right in the terminal. |
 | **Sessions that survive** | Terminals run in a foreground service in their own process. Lock the phone or close the UI; the agent keeps working and notifies you when it needs an answer. |
 | **Your projects** | Create a folder, clone any HTTPS or SSH Git URL, or sign in to GitHub and pick from your repositories. Everything lives under `/workspace/projects`. |
@@ -76,7 +77,7 @@ stay inside each CLI; XComb never handles provider passwords.
 ### Download the APK
 
 1. Open the [latest release](https://github.com/quitsaurabhverma2008-sketch/xcomb/releases/latest).
-2. Download **`XComb-1.1.1.apk`**.
+2. Download **`XComb-1.1.2.apk`**.
 3. **Uninstall any older build first.** CI builds are signed with a per-run
    throwaway key, so Android refuses to update an app signed by another key.
    Export anything you need from `/workspace` before uninstalling.
@@ -265,7 +266,7 @@ hide a buildable APK.
 | :-- | :-- |
 | App label | **XComb** |
 | Application ID | Unchanged from the MIT-licensed fork base — declared in [`android/app/build.gradle`](android/app/build.gradle) |
-| Version | `1.1.1` (versionCode `7`) |
+| Version | `1.1.2` (versionCode `8`) |
 | ABI | `arm64-v8a` only |
 | Min / target SDK | 24 / 36 |
 | Source | <https://github.com/quitsaurabhverma2008-sketch/xcomb> |

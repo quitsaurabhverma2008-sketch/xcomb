@@ -40,5 +40,6 @@ class TerminalRuntimePackage : BaseReactPackage() {
   override fun getViewManagers(reactContext: ReactApplicationContext): List<ModuleSpec> = listOf(
     ModuleSpec.viewManagerSpec { TerminalCanvasViewManager() },
     ModuleSpec.viewManagerSpec { TerminalInputViewManager() },
+    ModuleSpec.viewManagerSpec { BrowserWebViewManager() },
   )
 }
