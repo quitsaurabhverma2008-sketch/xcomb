@@ -1,0 +1,6 @@
+- New XComb look: yellow theme, XComb mark, launcher, splash and nine refreshed avatars
+- Six home tiles, three per row: Claude Code, Codex, OpenCode, Gemini CLI, FreeBuff and Terminal
+- Real Gemini CLI and FreeBuff logos
+- Terminal select and copy with the COPY key or a long-press
+- Split-screen browser: tap BROWSER, preview a localhost dev server on top and keep the terminal below
+- Installing over an older build signed with a different key? Uninstall the old app first
