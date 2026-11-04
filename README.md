@@ -27,6 +27,7 @@ No root. No Termux. Open source.
 
 <img src="docs/screenshots/xcomb-choose-linux.jpg" width="168" alt="XComb setup: choose Alpine or Debian">&nbsp;
 <img src="docs/screenshots/xcomb-create-user.jpg" width="168" alt="XComb setup: create a user and pick an avatar">&nbsp;
+<img src="docs/screenshots/xcomb-installing.jpg" width="168" alt="XComb setup: installing Alpine Linux and tools">&nbsp;
 <img src="docs/screenshots/xcomb-terminal-keys.jpg" width="168" alt="XComb setup: terminal key guide">
 
 </div>
