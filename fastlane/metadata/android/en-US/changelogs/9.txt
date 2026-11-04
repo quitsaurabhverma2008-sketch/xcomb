@@ -1,0 +1,6 @@
+- Browser menu: tap the yellow three-dot button at the top-left of the terminal
+- Split screen: browser on top, terminal below, with a draggable divider
+- Small window: a floating browser you can move and resize
+- Preview localhost dev servers without leaving XComb
+- Yellow theme, six 3x2 home tiles, terminal select/copy, Gemini CLI and FreeBuff logos, nine avatars
+- Installing over an older build signed with a different key? Uninstall the old app first

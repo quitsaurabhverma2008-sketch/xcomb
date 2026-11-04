@@ -2,8 +2,10 @@ import React from 'react';
 import {
   AppState,
   Keyboard,
+  type LayoutChangeEvent,
   KeyboardAvoidingView,
   PermissionsAndroid,
+  Pressable as RNPressable,
   Platform,
   StyleSheet,
   StatusBar,
@@ -41,7 +43,8 @@ import {BrandMark} from './BrandMark';
 import {toolchainInstallLabel} from './toolchainLabels';
 import {nextRequestId} from './terminalRequestId';
 import {InteractivePressable as Pressable} from '../ui/InteractivePressable';
-import {BrowserPane} from './BrowserPane';
+import {BrowserPane, DEFAULT_BROWSER_URL} from './BrowserPane';
+import {FloatingWindow, SplitDivider, type WindowRect} from './BrowserWindow';
 import {uiColors} from './palette';
 import {InstallProgressOverlay, installStepForStage, lastDownloadProgress, lastInstallStage} from './InstallProgressOverlay';
 import {SessionLimitOverlay} from './SessionLimitOverlay';
@@ -188,16 +191,16 @@ function hasVisibleTerminalContent(frame: TerminalFrame): boolean {
 type TerminalHeaderProps = Readonly<{
   onBack?: () => void;
   onHome?: () => void;
-  onBrowser?: () => void;
+  onBrowserMenu?: () => void;
   browserOpen?: boolean;
 }>;
 
-const TerminalHeader = React.memo(function TerminalHeaderView({onBack, onHome, onBrowser, browserOpen = false}: TerminalHeaderProps): React.JSX.Element {
+const TerminalHeader = React.memo(function TerminalHeaderView({onBack, onHome, onBrowserMenu, browserOpen = false}: TerminalHeaderProps): React.JSX.Element {
   return (
     <View pointerEvents="box-none" style={styles.floatingHeader} testID="terminal-floating-header">
-      {onBrowser !== undefined ? (
-        <Pressable accessibilityLabel={browserOpen ? 'Close browser' : 'Open browser'} accessibilityRole="button" onPress={onBrowser} style={[styles.floatingGroup, browserOpen && styles.browserButtonActive]} testID="terminal-browser-toggle">
-          <Text style={styles.browserButtonText}>🌐 BROWSER</Text>
+      {onBrowserMenu !== undefined ? (
+        <Pressable accessibilityLabel="Browser options" accessibilityRole="button" onPress={onBrowserMenu} style={[styles.floatingGroup, browserOpen && styles.browserButtonActive]} testID="terminal-browser-toggle">
+          <Text style={styles.menuArrowText}>⋮</Text>
         </Pressable>
       ) : <View />}
       {(onHome ?? onBack) !== undefined ? (
@@ -217,8 +220,25 @@ export function TerminalScreen({client: providedClient, runtime = undefined, onB
   const pendingViewportRef = React.useRef<TerminalViewport | undefined>(undefined);
   const viewportTimerRef = React.useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   // Split screen: the browser takes the top half and the terminal keeps running below.
-  const [browserOpen, setBrowserOpen] = React.useState(false);
-  const toggleBrowser = React.useCallback(() => setBrowserOpen(open => !open), []);
+  // 'split' puts the browser above the terminal with a drag line between them;
+  // 'window' floats a small movable, resizable browser over the full terminal.
+  const [browserMode, setBrowserMode] = React.useState<'closed' | 'split' | 'window'>('closed');
+  const [browserUrl, setBrowserUrl] = React.useState(DEFAULT_BROWSER_URL);
+  const [splitRatio, setSplitRatio] = React.useState(0.45);
+  const [browserMenuOpen, setBrowserMenuOpen] = React.useState(false);
+  const [screenBounds, setScreenBounds] = React.useState({width: 0, height: 0});
+  const [windowRect, setWindowRect] = React.useState<WindowRect>({x: 12, y: 96, w: 290, h: 230});
+  const browserOpen = browserMode !== 'closed';
+  const openBrowserMenu = React.useCallback(() => setBrowserMenuOpen(open => !open), []);
+  const chooseBrowserMode = React.useCallback((mode: 'closed' | 'split' | 'window') => {
+    setBrowserMenuOpen(false);
+    setBrowserMode(mode);
+  }, []);
+  const closeBrowser = React.useCallback(() => setBrowserMode('closed'), []);
+  const handleScreenLayout = React.useCallback((event: LayoutChangeEvent) => {
+    const {width, height} = event.nativeEvent.layout;
+    setScreenBounds(previous => (previous.width === width && previous.height === height ? previous : {width, height}));
+  }, []);
   const [cellWidth, setCellWidth] = React.useState(8);
   const [cellWidthMeasured, setCellWidthMeasured] = React.useState(false);
   const measureCellWidth = React.useCallback((width: number) => {
@@ -1148,10 +1168,17 @@ export function TerminalScreen({client: providedClient, runtime = undefined, onB
   return (
     <>
       <StatusBar barStyle="light-content" />
-      <View style={styles.safeArea} testID="terminal-screen">
-        {browserOpen ? <BrowserPane onClose={toggleBrowser} /> : null}
-        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={0} style={styles.keyboardRoot}>
-          <TerminalHeader browserOpen={browserOpen} onBack={onBack} onBrowser={toggleBrowser} onHome={onHome} />
+      <View onLayout={handleScreenLayout} style={styles.safeArea} testID="terminal-screen">
+        {browserMode === 'split' ? (
+          <>
+            <View style={{flex: splitRatio * 100}}>
+              <BrowserPane initialUrl={browserUrl} onClose={closeBrowser} onUrlChange={setBrowserUrl} />
+            </View>
+            <SplitDivider containerHeight={screenBounds.height} onRatioChange={setSplitRatio} ratio={splitRatio} />
+          </>
+        ) : null}
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={0} style={browserMode === 'split' ? {flex: (1 - splitRatio) * 100} : styles.keyboardRoot}>
+          <TerminalHeader browserOpen={browserOpen} onBack={onBack} onBrowserMenu={openBrowserMenu} onHome={onHome} />
 
           <View onLayout={handleOutputLayout} style={styles.output}>
             <TerminalGrid
@@ -1296,6 +1323,29 @@ export function TerminalScreen({client: providedClient, runtime = undefined, onB
             transcriptPagerOpen={transcriptPagerOpen}
           />}
         </KeyboardAvoidingView>
+        {browserMode === 'window' ? (
+          <FloatingWindow bounds={screenBounds} onRectChange={setWindowRect} rect={windowRect}>
+            <BrowserPane compact initialUrl={browserUrl} onClose={closeBrowser} onUrlChange={setBrowserUrl} />
+          </FloatingWindow>
+        ) : null}
+        {browserMenuOpen ? (
+          <>
+            <RNPressable accessibilityLabel="Dismiss browser menu" onPress={() => setBrowserMenuOpen(false)} style={styles.browserMenuBackdrop} />
+            <View style={styles.browserMenu} testID="browser-menu">
+              <Pressable accessibilityRole="button" onPress={() => chooseBrowserMode('split')} style={[styles.browserMenuItem, browserMode === 'split' && styles.browserMenuItemActive]} testID="browser-menu-split">
+                <Text style={styles.browserMenuText}>▤  Split screen</Text>
+              </Pressable>
+              <Pressable accessibilityRole="button" onPress={() => chooseBrowserMode('window')} style={[styles.browserMenuItem, browserMode === 'window' && styles.browserMenuItemActive]} testID="browser-menu-window">
+                <Text style={styles.browserMenuText}>◲  Small window</Text>
+              </Pressable>
+              {browserOpen ? (
+                <Pressable accessibilityRole="button" onPress={() => chooseBrowserMode('closed')} style={styles.browserMenuItem} testID="browser-menu-close">
+                  <Text style={styles.browserMenuText}>✕  Close browser</Text>
+                </Pressable>
+              ) : null}
+            </View>
+          </>
+        ) : null}
       </View>
     </>
   );
@@ -1304,7 +1354,11 @@ export function TerminalScreen({client: providedClient, runtime = undefined, onB
 const styles = StyleSheet.create({
   safeArea: {backgroundColor: TERMINAL_BACKGROUND, flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight ?? 0 : 0},
   keyboardRoot: {flex: 1},
-  browserButtonText: {color: uiColors.accent, fontFamily: UI_FONT_FAMILY, fontSize: 11, fontWeight: '800', includeFontPadding: false, letterSpacing: 0.6, paddingHorizontal: 10},
+  browserMenuBackdrop: {backgroundColor: 'transparent', bottom: 0, left: 0, position: 'absolute', right: 0, top: 0, zIndex: 40},
+  browserMenu: {backgroundColor: uiColors.panel, borderColor: uiColors.accent, borderRadius: 12, borderWidth: 1, elevation: 30, left: 12, overflow: 'hidden', position: 'absolute', top: (Platform.OS === 'android' ? StatusBar.currentHeight ?? 0 : 0) + 58, zIndex: 41},
+  browserMenuItem: {minHeight: 44, justifyContent: 'center', paddingHorizontal: 16},
+  browserMenuItemActive: {backgroundColor: uiColors.accentSurface},
+  browserMenuText: {color: uiColors.accent, fontFamily: UI_FONT_FAMILY, fontSize: 13, fontWeight: '800', includeFontPadding: false, letterSpacing: 0.4},
   browserButtonActive: {backgroundColor: uiColors.accentSurface, borderColor: uiColors.accent, borderWidth: 1},
   floatingHeader: {alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', left: 0, paddingHorizontal: 12, position: 'absolute', right: 0, top: 8, zIndex: 10},
   floatingGroup: {alignItems: 'center', borderColor: 'rgba(48, 56, 59, 0.65)', borderRadius: 22, borderWidth: 1, flexDirection: 'row', height: 44, justifyContent: 'center', paddingHorizontal: 5},
