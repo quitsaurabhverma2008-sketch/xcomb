@@ -25,10 +25,14 @@ export function normalizeBrowserAddress(input: string): string {
 type BrowserPaneProps = Readonly<{
   onClose: () => void;
   initialUrl?: string;
+  /** Reports the page address so a layout change (split / window) can reopen it. */
+  onUrlChange?: (url: string) => void;
+  /** Fewer controls, for the small floating window. */
+  compact?: boolean;
 }>;
 
 /** The browser half of the split screen: address bar, back/reload and a WebView. */
-export function BrowserPane({onClose, initialUrl = DEFAULT_BROWSER_URL}: BrowserPaneProps): React.JSX.Element {
+export function BrowserPane({onClose, initialUrl = DEFAULT_BROWSER_URL, onUrlChange, compact = false}: BrowserPaneProps): React.JSX.Element {
   const [address, setAddress] = React.useState(initialUrl);
   const [url, setUrl] = React.useState(initialUrl);
   const [state, setState] = React.useState<BrowserState | undefined>(undefined);
@@ -48,8 +52,11 @@ export function BrowserPane({onClose, initialUrl = DEFAULT_BROWSER_URL}: Browser
   const handleState = React.useCallback((event: NativeSyntheticEvent<BrowserState>) => {
     const next = event.nativeEvent;
     setState(next);
-    if (next.url.length > 0) setAddress(next.url);
-  }, []);
+    if (next.url.length > 0) {
+      setAddress(next.url);
+      onUrlChange?.(next.url);
+    }
+  }, [onUrlChange]);
 
   return (
     <View style={styles.pane} testID="browser-pane">
@@ -57,9 +64,9 @@ export function BrowserPane({onClose, initialUrl = DEFAULT_BROWSER_URL}: Browser
         <InteractivePressable accessibilityLabel="Browser back" disabled={state?.canGoBack !== true} onPress={() => setBack(value => value + 1)} style={[styles.button, state?.canGoBack !== true && styles.disabled]} testID="browser-back">
           <Text style={styles.buttonText}>‹</Text>
         </InteractivePressable>
-        <InteractivePressable accessibilityLabel="Browser forward" disabled={state?.canGoForward !== true} onPress={() => setForward(value => value + 1)} style={[styles.button, state?.canGoForward !== true && styles.disabled]} testID="browser-forward">
+        {compact ? null : <InteractivePressable accessibilityLabel="Browser forward" disabled={state?.canGoForward !== true} onPress={() => setForward(value => value + 1)} style={[styles.button, state?.canGoForward !== true && styles.disabled]} testID="browser-forward">
           <Text style={styles.buttonText}>›</Text>
-        </InteractivePressable>
+        </InteractivePressable>}
         <TextInput
           autoCapitalize="none"
           autoCorrect={false}
