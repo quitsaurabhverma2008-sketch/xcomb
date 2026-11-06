@@ -12,6 +12,8 @@ import {ScreenShell} from '../screen/ScreenShell';
 import {BrandHeader, uiColors} from './brand';
 import {InteractivePressable as Pressable} from './InteractivePressable';
 import {ProfileAvatar} from './ProfileAvatar';
+import {ConfigPage, ConnectorsPage, HomePager} from './HomePages';
+import type {AgentConfig} from '../files/agentConfigs';
 import {DISTRO_NAMES, type ProfileUser, type LinuxDistro} from '../profile/profileStore';
 
 export type MetroLaunchTarget = Readonly<{
@@ -27,6 +29,8 @@ export type MetroLaunchTarget = Readonly<{
 }>;
 
 export type MetroHomeScreenProps = Readonly<{
+  /** Opens a tool's settings folder for editing. */
+  onOpenConfig?: (agent: AgentConfig) => void;
   githubAccount?: GithubAccount;
   /** Who is signed in, so it is clear whose Linux the sessions run in. */
   user?: ProfileUser;
@@ -83,7 +87,7 @@ function AppTile({icon, logo, tileId, title, detail, onPress}: AppTileProps): Re
   );
 }
 
-export function MetroHomeScreen({githubAccount, user, onOpenUser, accountIntro, onOpen, onOpenGithubLogin, onOpenGithubAccount, onOpenSettings, loadRecentSessions, onResumeSession, onTerminateSession}: MetroHomeScreenProps): React.JSX.Element {
+export function MetroHomeScreen({onOpenConfig, githubAccount, user, onOpenUser, accountIntro, onOpen, onOpenGithubLogin, onOpenGithubAccount, onOpenSettings, loadRecentSessions, onResumeSession, onTerminateSession}: MetroHomeScreenProps): React.JSX.Element {
   const [snapshot, setSnapshot] = React.useState<DeviceSnapshot | null>(null);
   // The upgrade coach mark spotlights the user card; both are measured in
   // window coordinates so the hole lines up whatever the shell's insets.
@@ -180,6 +184,10 @@ export function MetroHomeScreen({githubAccount, user, onOpenUser, accountIntro, 
 
   return (
     <ScreenShell testID="metro-home-screen">
+      <HomePager
+        connectors={<ConnectorsPage onOpenOmniRouter={() => onOpen({title: 'Omni Router', eyebrow: 'CONNECTOR', command: buildZshCommand('mkdir -p /workspace/projects && cd /workspace/projects && omniroute; exec zsh -l'), toolchain: 'omniroute'})} />}
+        config={<ConfigPage onOpenConfig={agent => onOpenConfig?.(agent)} />}
+        home={(
       <ScrollView contentContainerStyle={styles.content}>
         <BrandHeader
           eyebrow=""
@@ -324,6 +332,8 @@ export function MetroHomeScreen({githubAccount, user, onOpenUser, accountIntro, 
         ) : null}
 
       </ScrollView>
+        )}
+      />
       {accountIntro === undefined || user === undefined ? null : (
         <View collapsable={false} onLayout={measureIntro} ref={introRootRef} style={StyleSheet.absoluteFill} testID="metro-account-intro">
           <AccountCoachMark

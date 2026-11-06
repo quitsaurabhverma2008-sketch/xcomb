@@ -1398,7 +1398,7 @@ describe('TerminalScreen', () => {
     await ReactTestRenderer.act(async () => { renderer.unmount(); await flushAsync(); });
   });
 
-  test('renders URLs as clickable links and opens them externally', async () => {
+  test('opens local links in the built-in browser and other links externally', async () => {
     const runtime = fakeRuntime();
     const openURL = jest.spyOn(Linking, 'openURL').mockResolvedValue(undefined);
     const client = new TerminalSessionClient(runtime.spec, handler => {
@@ -1440,8 +1440,9 @@ describe('TerminalScreen', () => {
     });
     expect(openURL.mock.calls).toEqual([
       ['https://claude.ai/oauth/authorize'],
-      ['http://localhost:3000'],
     ]);
+    expect(renderer.root.findByProps({testID: 'browser-pane'})).toBeDefined();
+    expect(renderer.root.findByProps({testID: 'browser-address'}).props.value).toBe('http://localhost:3000');
     await ReactTestRenderer.act(async () => { renderer.unmount(); await flushAsync(); });
     expect(runtime.listeners).toHaveLength(0);
   });

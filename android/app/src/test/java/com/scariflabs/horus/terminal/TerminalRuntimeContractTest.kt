@@ -39,6 +39,7 @@ class TerminalRuntimeContractTest {
     assertTrue(TerminalRuntimeContract.isValidToolchainTarget(TerminalRuntimeContract.TOOLCHAIN_TARGET_OPENCODE))
     assertTrue(TerminalRuntimeContract.isValidToolchainTarget(TerminalRuntimeContract.TOOLCHAIN_TARGET_GEMINI))
     assertTrue(TerminalRuntimeContract.isValidToolchainTarget(TerminalRuntimeContract.TOOLCHAIN_TARGET_FREEBUFF))
+    assertTrue(TerminalRuntimeContract.isValidToolchainTarget(TerminalRuntimeContract.TOOLCHAIN_TARGET_OMNIROUTE))
     assertFalse(TerminalRuntimeContract.isValidToolchainTarget("all"))
   }
 

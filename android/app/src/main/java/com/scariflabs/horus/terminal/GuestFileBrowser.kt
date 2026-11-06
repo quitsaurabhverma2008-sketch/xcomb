@@ -26,6 +26,8 @@ import java.nio.file.attribute.BasicFileAttributes
 class GuestFileBrowser(
   private val homeRoot: File,
   private val workspaceRoot: File,
+  /** Per-agent homes, addressed as `agent:<key>`; the only roots that can be written. */
+  private val agentRoots: Map<String, File> = emptyMap(),
 ) {
   enum class EntryKind(val wireName: String) {
     DIRECTORY("directory"),
@@ -44,6 +46,12 @@ class GuestFileBrowser(
     ) : ListOutcome
 
     data class Failure(val errorCode: String) : ListOutcome
+  }
+
+  sealed interface WriteOutcome {
+    object Success : WriteOutcome
+
+    data class Failure(val errorCode: String) : WriteOutcome
   }
 
   sealed interface ReadOutcome {
@@ -240,7 +248,48 @@ class GuestFileBrowser(
   private fun rootFor(root: String): File? = when (root) {
     ROOT_HOME -> homeRoot
     ROOT_WORKSPACE -> workspaceRoot
-    else -> null
+    else -> agentRoots[root]
+  }
+
+  /**
+   * Saves [bytes] into a regular file below an agent home, creating it when
+   * missing. Same rules as reads: nothing follows a symlink, nothing leaves
+   * the root, and a file may not exceed the preview limit so every saved file
+   * can be opened again here.
+   */
+  fun write(root: String, path: List<String>, bytes: ByteArray): WriteOutcome {
+    if (!root.startsWith(AGENT_ROOT_PREFIX)) return WriteOutcome.Failure(INVALID_PATH)
+    if (path.isEmpty() || !isValidPath(path)) return WriteOutcome.Failure(INVALID_PATH)
+    if (bytes.size > PREVIEW_LIMIT_BYTES) return WriteOutcome.Failure(TOO_LARGE)
+    val rootDir = rootFor(root) ?: return WriteOutcome.Failure(INVALID_PATH)
+    val parent = when (val resolved = resolveDirectory(rootDir, path.dropLast(1))) {
+      is Resolved.Failure -> return WriteOutcome.Failure(resolved.errorCode)
+      is Resolved.Found -> resolved
+    }
+    val file = parent.target.resolve(path.last())
+    val attributes = lstat(file)
+    if (attributes != null && (attributes.isSymbolicLink || !attributes.isRegularFile)) {
+      return WriteOutcome.Failure(INVALID_PATH)
+    }
+    // A new file cannot be canonicalized yet; its parent was already checked
+    // and the validated last component cannot contain a separator.
+    if (attributes != null && !staysUnderRoot(parent.root, file)) return WriteOutcome.Failure(INVALID_PATH)
+    return try {
+      val options = if (attributes == null) {
+        arrayOf(StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE, LinkOption.NOFOLLOW_LINKS)
+      } else {
+        arrayOf(StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING, LinkOption.NOFOLLOW_LINKS)
+      }
+      Files.newByteChannel(file, *options).use { channel ->
+        val buffer = ByteBuffer.wrap(bytes)
+        while (buffer.hasRemaining()) channel.write(buffer)
+      }
+      WriteOutcome.Success
+    } catch (_: IOException) {
+      WriteOutcome.Failure(COMMAND_FAILED)
+    } catch (_: SecurityException) {
+      WriteOutcome.Failure(COMMAND_FAILED)
+    }
   }
 
   private fun resolveDirectory(rootDir: File, components: List<String>): Resolved {
@@ -296,6 +345,7 @@ class GuestFileBrowser(
 
   companion object {
     private const val ROOT_HOME = "home"
+    const val AGENT_ROOT_PREFIX = "agent:"
     private const val ROOT_WORKSPACE = "workspace"
     private const val INVALID_PATH = "invalid_path"
     private const val NOT_FOUND = "not_found"

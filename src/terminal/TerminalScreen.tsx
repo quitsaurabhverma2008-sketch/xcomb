@@ -43,7 +43,7 @@ import {BrandMark} from './BrandMark';
 import {toolchainInstallLabel} from './toolchainLabels';
 import {nextRequestId} from './terminalRequestId';
 import {InteractivePressable as Pressable} from '../ui/InteractivePressable';
-import {BrowserPane, DEFAULT_BROWSER_URL} from './BrowserPane';
+import {BrowserPane, DEFAULT_BROWSER_URL, OMNI_ROUTER_URL, findLocalUrl, isLocalDevUrl} from './BrowserPane';
 import {FloatingWindow, SplitDivider, type WindowRect} from './BrowserWindow';
 import {uiColors} from './palette';
 import {InstallProgressOverlay, installStepForStage, lastDownloadProgress, lastInstallStage} from './InstallProgressOverlay';
@@ -229,6 +229,8 @@ export function TerminalScreen({client: providedClient, runtime = undefined, onB
   const [screenBounds, setScreenBounds] = React.useState({width: 0, height: 0});
   const [windowRect, setWindowRect] = React.useState<WindowRect>({x: 12, y: 96, w: 290, h: 230});
   const browserOpen = browserMode !== 'closed';
+  const screenBoundsRef = React.useRef(screenBounds);
+  screenBoundsRef.current = screenBounds;
   const openBrowserMenu = React.useCallback(() => setBrowserMenuOpen(open => !open), []);
   const chooseBrowserMode = React.useCallback((mode: 'closed' | 'split' | 'window') => {
     setBrowserMenuOpen(false);
@@ -343,7 +345,7 @@ export function TerminalScreen({client: providedClient, runtime = undefined, onB
   // because they scan output in JS.
   const nativeHarness = Platform.OS === 'android' && !Platform.isTesting &&
     (toolchain === 'claude' || toolchain === 'codex' || toolchain === 'opencode' ||
-      toolchain === 'gemini' || toolchain === 'freebuff' ||
+      toolchain === 'gemini' || toolchain === 'freebuff' || toolchain === 'omniroute' ||
       (toolchain === 'shell' && completionMarker === undefined));
   const nativeTerminalInput = Platform.OS === 'android' && !Platform.isTesting;
   const nativeOpenCode = nativeHarness && toolchain === 'opencode';
@@ -497,6 +499,12 @@ export function TerminalScreen({client: providedClient, runtime = undefined, onB
   }, [client, completionMarker, deliverCommandFailure, handleSessionExited, nativeHarness, showInstallFailure, toolchain]);
 
   const openTerminalLink = React.useCallback((url: string) => {
+    // Dev-server links open in the built-in browser instead of leaving the app.
+    if (isLocalDevUrl(url)) {
+      setBrowserUrl(findLocalUrl(url) ?? url);
+      setBrowserMode(mode => (mode === 'closed' ? 'window' : mode));
+      return;
+    }
     void openTrustedTerminalLink(url).catch(() => {
       if (mountedRef.current) setError('link_unavailable');
     });
@@ -1013,6 +1021,31 @@ export function TerminalScreen({client: providedClient, runtime = undefined, onB
     }, () => undefined);
   }, [nativeSessionId]);
   const closeCopyView = React.useCallback(() => setCopyText(undefined), []);
+
+  // Omni Router prints its dashboard address when it starts. Open it once in
+  // the small window; if the address never shows up, use its default port.
+  const omniOpenedRef = React.useRef(false);
+  React.useEffect(() => {
+    const runtime = nativeTerminalRuntime;
+    if (toolchain !== 'omniroute' || runtime === null || nativeSessionId === undefined || omniOpenedRef.current) return undefined;
+    let readySince: number | undefined;
+    const timer = setInterval(() => {
+      if (readySince === undefined && installReadyRef.current) readySince = Date.now();
+      runtime.terminalScreenText(nativeSessionId).then(text => {
+        if (!mountedRef.current || omniOpenedRef.current) return;
+        const found = typeof text === 'string' ? findLocalUrl(text) : undefined;
+        const waitedLongEnough = readySince !== undefined && Date.now() - readySince > 20_000;
+        if (found !== undefined || waitedLongEnough) {
+          omniOpenedRef.current = true;
+          const {width, height} = screenBoundsRef.current;
+          if (width > 0 && height > 0) setWindowRect({x: 12, y: 60, w: Math.max(220, width - 24), h: Math.round(height * 0.55)});
+          setBrowserUrl(found ?? OMNI_ROUTER_URL);
+          setBrowserMode('window');
+        }
+      }, () => undefined);
+    }, 1500);
+    return () => clearInterval(timer);
+  }, [nativeSessionId, toolchain]);
   const copyAllText = React.useCallback(
     (text: string) => (nativeTerminalRuntime === null ? Promise.resolve(false) : nativeTerminalRuntime.writeClipboardText(text)),
     [],
@@ -1180,7 +1213,7 @@ export function TerminalScreen({client: providedClient, runtime = undefined, onB
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={0} style={browserMode === 'split' ? {flex: (1 - splitRatio) * 100} : styles.keyboardRoot}>
           <TerminalHeader browserOpen={browserOpen} onBack={onBack} onBrowserMenu={openBrowserMenu} onHome={onHome} />
 
-          <View onLayout={handleOutputLayout} style={styles.output}>
+          <View onLayout={handleOutputLayout} style={[styles.output, (toolchain === 'shell' || toolchain === 'omniroute') && styles.outputBelowHeader]}>
             <TerminalGrid
               frame={frame}
               nativeSessionId={nativeSessionId}
@@ -1364,6 +1397,8 @@ const styles = StyleSheet.create({
   floatingGroup: {alignItems: 'center', borderColor: 'rgba(48, 56, 59, 0.65)', borderRadius: 22, borderWidth: 1, flexDirection: 'row', height: 44, justifyContent: 'center', paddingHorizontal: 5},
   menuArrowText: {color: uiColors.accent, fontFamily: UI_FONT_FAMILY, fontSize: 20, fontWeight: '800', includeFontPadding: false, lineHeight: 22, textAlign: 'center', width: 34},
   output: {backgroundColor: TERMINAL_BACKGROUND, flex: 1, overflow: 'hidden'},
+  // Keep the first shell lines clear of the floating menu and home buttons.
+  outputBelowHeader: {marginTop: 52},
   error: {color: uiColors.danger, fontFamily: UI_FONT_FAMILY, fontSize: 11, paddingHorizontal: 18, paddingTop: 8},
   logToggleRow: {alignItems: 'center', bottom: 24, elevation: 8, left: 0, position: 'absolute', right: 0, zIndex: 8},
   logToggle: {alignItems: 'center', backgroundColor: uiColors.panel, borderColor: uiColors.border, borderRadius: 8, borderWidth: 1, justifyContent: 'center', minHeight: 36, paddingHorizontal: 16},

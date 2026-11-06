@@ -14,13 +14,33 @@ export const DEFAULT_BROWSER_URL = 'http://localhost:3000';
 export function normalizeBrowserAddress(input: string): string {
   const text = input.trim();
   if (text.length === 0) return DEFAULT_BROWSER_URL;
-  if (/^https?:\/\//i.test(text)) return text;
+  // Any address that already names a scheme is kept as typed (https, about:,
+  // data:, view-source:, mailto: ...); native decides what is safe to open.
+  if (/^[a-z][a-z0-9+.-]*:(?!\d+(\/|$))/i.test(text)) return text;
   if (/^:?\d{2,5}(\/.*)?$/.test(text)) return `http://localhost:${text.replace(/^:/, '')}`;
   if (/^(localhost|127\.0\.0\.1|0\.0\.0\.0|10\.\d+\.\d+\.\d+|192\.168\.\d+\.\d+)(:\d+)?(\/.*)?$/i.test(text)) {
     return `http://${text.replace(/^0\.0\.0\.0/, 'localhost')}`;
   }
+  // Plain words are a search, a name with a dot is a site.
+  if (/\s/.test(text) || !text.includes('.')) return `https://duckduckgo.com/?q=${encodeURIComponent(text)}`;
   return `https://${text}`;
 }
+
+const LOCAL_URL_PATTERN = /https?:\/\/(?:localhost|127\.0\.0\.1|0\.0\.0\.0|\[::1\]):\d{2,5}(?:\/[^\s"'<>)\]]*)?/i;
+
+/** The first dev-server address (localhost / 127.0.0.1 / 0.0.0.0 with a port) in some terminal text. */
+export function findLocalUrl(text: string): string | undefined {
+  const match = LOCAL_URL_PATTERN.exec(text);
+  if (match === null) return undefined;
+  return match[0].replace(/^(https?:\/\/)0\.0\.0\.0/i, '$1localhost').replace(/[.,;:]+$/, '');
+}
+
+export function isLocalDevUrl(url: string): boolean {
+  return findLocalUrl(url) === url || LOCAL_URL_PATTERN.test(url);
+}
+
+/** Omni Router's dashboard. */
+export const OMNI_ROUTER_URL = 'http://localhost:20128';
 
 type BrowserPaneProps = Readonly<{
   onClose: () => void;
@@ -99,7 +119,7 @@ export function BrowserPane({onClose, initialUrl = DEFAULT_BROWSER_URL, onUrlCha
           <View pointerEvents="none" style={styles.errorBox}>
             <Text style={styles.errorTitle}>Can't open this page</Text>
             <Text style={styles.errorText}>{state.error}</Text>
-            <Text style={styles.errorText}>Is your dev server running? Start it in the terminal below, then tap reload.</Text>
+            <Text style={styles.errorText}>Is your dev server running? Start it in the terminal, then tap reload.</Text>
           </View>
         ) : null}
       </View>
