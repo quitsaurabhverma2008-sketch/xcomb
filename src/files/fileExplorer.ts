@@ -12,7 +12,7 @@ import {
   type TerminalSessionOperationErrorCode,
 } from '../terminal/session/sessionContract';
 
-export type GuestFileRoot = 'home' | 'workspace';
+export type GuestFileRoot = 'home' | 'workspace' | `agent:${string}`;
 export type GuestFilePath = readonly string[];
 export type GuestFileEntry = Readonly<{
   name: string;
@@ -68,7 +68,7 @@ const CONTENT_STATUSES = ['ok', 'invalid_path', 'not_found', 'too_large', 'comma
 const nextRequestId = createRequestIdFactory('files');
 
 function isGuestFileRoot(value: unknown): value is GuestFileRoot {
-  return value === 'home' || value === 'workspace';
+  return value === 'home' || value === 'workspace' || (typeof value === 'string' && /^agent:[a-z]{2,16}$/.test(value));
 }
 
 function hasWellFormedSurrogates(value: string): boolean {
@@ -769,6 +769,10 @@ export function listGuestDirectory(
     client?.dispose();
     return listGuestDirectoryNatively(native, root, path);
   }
+  if (root.startsWith('agent:')) {
+    client?.dispose();
+    return Promise.resolve({kind: 'error', errorCode: 'command_failed'});
+  }
   const queryClient = client ?? new TerminalSessionClient();
   const markerId = `q${(nextRequestId.currentSequence() + 1).toString(36)}`;
   let command: string;
@@ -800,6 +804,10 @@ export function readGuestTextFile(
     client?.dispose();
     return readGuestTextFileNatively(native, root, path);
   }
+  if (root.startsWith('agent:')) {
+    client?.dispose();
+    return Promise.resolve({kind: 'error', errorCode: 'command_failed'});
+  }
   const queryClient = client ?? new TerminalSessionClient();
   const markerId = `q${(nextRequestId.currentSequence() + 1).toString(36)}`;
   let command: string;
@@ -810,4 +818,46 @@ export function readGuestTextFile(
     return Promise.resolve({kind: 'error', errorCode: 'invalid_path'});
   }
   return runGuestQuery('read', command, markerId, parseGuestTextFileOutput, queryClient);
+}
+
+export type GuestFileWriteResult =
+  | Readonly<{kind: 'ok'}>
+  | Readonly<{kind: 'error'; errorCode: GuestFileExplorerErrorCode}>;
+
+/** Saves UTF-8 text into an agent's config file. Native storage only; at most 64 KiB. */
+export async function writeGuestTextFile(
+  root: GuestFileRoot,
+  path: GuestFilePath,
+  content: string,
+  runtime: Partial<Pick<TerminalRuntimeSpec, 'writeGuestFile'>> | null = nativeTerminalRuntime,
+): Promise<GuestFileWriteResult> {
+  if (!isGuestFileRoot(root) || !root.startsWith('agent:') || !isValidGuestFilePath(path) || path.length === 0) {
+    return {kind: 'error', errorCode: 'invalid_path'};
+  }
+  if (utf8Length(content) > GUEST_FILE_PREVIEW_LIMIT_BYTES) return {kind: 'error', errorCode: 'too_large'};
+  if (runtime === null || runtime === undefined || typeof runtime.writeGuestFile !== 'function') {
+    return {kind: 'error', errorCode: 'command_failed'};
+  }
+  const requestId = nextRequestId('write');
+  try {
+    const response: unknown = await runtime.writeGuestFile({requestId, root, path: [...path], content});
+    if (isRecord(response) && response.requestId === requestId && response.status === 'success') return {kind: 'ok'};
+    return isRecord(response) ? nativeErrorResult(response) : {kind: 'error', errorCode: 'invalid_output'};
+  } catch {
+    return {kind: 'error', errorCode: 'command_failed'};
+  }
+}
+
+function utf8Length(text: string): number {
+  let bytes = 0;
+  for (let index = 0; index < text.length; index += 1) {
+    const code = text.charCodeAt(index);
+    if (code < 0x80) bytes += 1;
+    else if (code < 0x800) bytes += 2;
+    else if (code >= 0xd800 && code <= 0xdbff) {
+      bytes += 4;
+      index += 1;
+    } else bytes += 3;
+  }
+  return bytes;
 }

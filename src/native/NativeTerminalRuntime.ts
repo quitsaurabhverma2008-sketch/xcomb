@@ -217,9 +217,10 @@ export const TERMINAL_TOOLCHAIN_TARGETS = [
   'opencode',
   'gemini',
   'freebuff',
+  'omniroute',
 ] as const;
 
-export type TerminalToolchainTarget = 'shell' | 'github' | 'claude' | 'codex' | 'opencode' | 'gemini' | 'freebuff';
+export type TerminalToolchainTarget = 'shell' | 'github' | 'claude' | 'codex' | 'opencode' | 'gemini' | 'freebuff' | 'omniroute';
 
 export type ProvisionToolchainResponse = {
   requestId: string;
@@ -446,7 +447,12 @@ export type AcknowledgeSessionOutputResponse = {
   errorCode?: TerminalRuntimeErrorCode;
 };
 
-export type GuestFileRootName = 'home' | 'workspace';
+/**
+ * Native code accepts `home`, `workspace`, or `agent:<key>` and validates the
+ * value again before touching disk. Kept as a plain string for React Native
+ * codegen, which cannot parse the template-literal form of this type.
+ */
+export type GuestFileRootName = string;
 
 export type GuestFileErrorCode =
   | 'internal_error'
@@ -482,6 +488,21 @@ export type ReadGuestFileRequest = {
   requestId: string;
   root: GuestFileRootName;
   path: string[];
+};
+
+export type WriteGuestFileRequest = {
+  requestId: string;
+  /** Only agent homes (`agent:<key>`) can be written. */
+  root: GuestFileRootName;
+  path: string[];
+  /** UTF-8 text, at most 64 KiB. */
+  content: string;
+};
+
+export type WriteGuestFileResponse = {
+  requestId: string;
+  status: 'success' | 'error';
+  errorCode?: GuestFileErrorCode;
 };
 
 export type ReadGuestFileResponse = {
@@ -601,6 +622,8 @@ export interface Spec extends TurboModule {
   listGuestDirectory(request: ListGuestDirectoryRequest): Promise<ListGuestDirectoryResponse>;
   /** Reads a capped regular-file preview directly from app-private storage. */
   readGuestFile(request: ReadGuestFileRequest): Promise<ReadGuestFileResponse>;
+  /** Saves edited text into an agent's config files. */
+  writeGuestFile(request: WriteGuestFileRequest): Promise<WriteGuestFileResponse>;
   /** Copies a guest directory's regular files into the shared Download/XComb folder. */
   exportGuestDirectory(request: ExportGuestDirectoryRequest): Promise<ExportGuestDirectoryResponse>;
   /** No-op required by NativeEventEmitter; events are emitted natively. */

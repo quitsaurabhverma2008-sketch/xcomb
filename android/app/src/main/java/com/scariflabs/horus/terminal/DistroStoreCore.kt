@@ -400,6 +400,7 @@ class DistroStoreCore(
         TerminalRuntimeContract.TOOLCHAIN_TARGET_OPENCODE,
         TerminalRuntimeContract.TOOLCHAIN_TARGET_GEMINI,
         TerminalRuntimeContract.TOOLCHAIN_TARGET_FREEBUFF,
+        TerminalRuntimeContract.TOOLCHAIN_TARGET_OMNIROUTE,
       ).forEach { harness ->
         val harnessHome = paths.harnessHome(harness)
         if (!harnessHome.mkdirs() && !harnessHome.isDirectory) {

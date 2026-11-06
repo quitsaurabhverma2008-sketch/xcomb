@@ -16,6 +16,13 @@ describe('normalizeBrowserAddress', () => {
     expect(normalizeBrowserAddress(':8080/app')).toBe('http://localhost:8080/app');
   });
 
+  it('keeps other schemes and turns plain words into a search', () => {
+    expect(normalizeBrowserAddress('about:blank')).toBe('about:blank');
+    expect(normalizeBrowserAddress('view-source:https://example.com')).toBe('view-source:https://example.com');
+    expect(normalizeBrowserAddress('mailto:a@b.co')).toBe('mailto:a@b.co');
+    expect(normalizeBrowserAddress('best terminal apps')).toBe('https://duckduckgo.com/?q=best%20terminal%20apps');
+  });
+
   it('uses http for local hosts and https for everything else', () => {
     expect(normalizeBrowserAddress('localhost:4000')).toBe('http://localhost:4000');
     expect(normalizeBrowserAddress('0.0.0.0:3000')).toBe('http://localhost:3000');

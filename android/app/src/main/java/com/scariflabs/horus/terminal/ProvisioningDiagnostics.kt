@@ -8,7 +8,7 @@ internal object ProvisioningText {
   const val MAX_LINE_CHARS = 2048
   const val EMPTY = "No diagnostic output was captured."
   const val OMITTED = "Installer output was omitted because it contained no recognized safe diagnostic message."
-  val stages = setOf("start", "apk", "apk_failed", "base_ready", "github", "github_failed", "claude", "claude_failed", "codex", "codex_failed", "opencode", "opencode_failed", "gemini", "gemini_failed", "freebuff", "freebuff_failed", "normalize", "normalize_failed", "verify", "verify_failed", "ready")
+  val stages = setOf("start", "apk", "apk_failed", "base_ready", "github", "github_failed", "claude", "claude_failed", "codex", "codex_failed", "opencode", "opencode_failed", "gemini", "gemini_failed", "freebuff", "freebuff_failed", "omniroute", "omniroute_failed", "normalize", "normalize_failed", "verify", "verify_failed", "ready")
   private val rules = listOf(
     "no space left on device|ENOSPC" to "No space left on device.",
     "could not get lock|unable to (acquire.*lock|lock database)|failed to open apk database" to "Another package installation holds the package database lock.",
@@ -48,6 +48,7 @@ internal data class ProvisioningResult(
     stage == "opencode_failed" -> "toolchain_opencode_install_failed"
     stage == "gemini_failed" -> "toolchain_install_failed"
     stage == "freebuff_failed" -> "toolchain_install_failed"
+    stage == "omniroute_failed" -> "toolchain_install_failed"
     stage == "normalize_failed" -> "toolchain_normalization_failed"
     stage == "verify_failed" || outcome == "incomplete" -> "toolchain_incomplete"
     else -> "toolchain_install_failed"

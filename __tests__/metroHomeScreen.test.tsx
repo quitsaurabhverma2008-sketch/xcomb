@@ -62,6 +62,33 @@ describe('MetroHomeScreen', () => {
     });
   });
 
+  test('opens Omni Router from Connectors and a tool folder from Config', async () => {
+    const targets: MetroLaunchTarget[] = [];
+    const onOpenConfig = jest.fn();
+    let renderer!: ReactTestRenderer.ReactTestRenderer;
+    await ReactTestRenderer.act(async () => {
+      renderer = ReactTestRenderer.create(
+        <MetroHomeScreen onOpen={target => targets.push(target)} onOpenConfig={onOpenConfig} onOpenGithubLogin={() => undefined} />,
+      );
+      await Promise.resolve();
+    });
+    // Omni Router is a connector, not one of the six home tiles.
+    expect(renderer.root.findAllByProps({testID: 'metro-harness-omniroute'})).toHaveLength(0);
+    await ReactTestRenderer.act(async () => {
+      renderer.root.findByProps({testID: 'connector-omniroute'}).props.onPress();
+    });
+    expect(targets[0]?.toolchain).toBe('omniroute');
+    expect(targets[0]?.command).toContain('omniroute');
+    await ReactTestRenderer.act(async () => {
+      renderer.root.findByProps({testID: 'config-open-claude'}).props.onPress();
+    });
+    expect(onOpenConfig).toHaveBeenCalledWith(expect.objectContaining({key: 'claude', label: '.claude'}));
+    await ReactTestRenderer.act(async () => {
+      renderer.unmount();
+      await Promise.resolve();
+    });
+  });
+
   test('points an upgraded user at Account once, from a card above the menu', async () => {
     const onOpen = jest.fn();
     const onDismiss = jest.fn();

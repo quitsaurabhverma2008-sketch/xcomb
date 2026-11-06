@@ -2,7 +2,11 @@ package com.scariflabs.horus.terminal
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.ActivityNotFoundException
+import android.content.Intent
 import android.graphics.Bitmap
+import android.net.http.SslError
+import android.webkit.SslErrorHandler
 import android.view.ViewGroup
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceError
@@ -45,7 +49,20 @@ class BrowserWebView(context: Context) : WebView(context) {
     webChromeClient = WebChromeClient()
     webViewClient = object : WebViewClient() {
       override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean =
-        !isWebUrl(request.url.toString())
+        when (classify(request.url.toString())) {
+          UrlKind.PAGE -> false
+          UrlKind.EXTERNAL -> {
+            openExternally(request.url.toString())
+            true
+          }
+          UrlKind.BLOCKED -> true
+        }
+
+      // Dev servers often use self-signed certificates. Accept those only for
+      // this device and the local network; every other host keeps the check.
+      override fun onReceivedSslError(view: WebView, handler: SslErrorHandler, error: SslError) {
+        if (isLocalHost(runCatching { android.net.Uri.parse(error.url).host }.getOrNull())) handler.proceed() else handler.cancel()
+      }
 
       override fun onPageStarted(view: WebView, url: String?, favicon: Bitmap?) = emitState(loading = true, error = null)
 
@@ -60,12 +77,12 @@ class BrowserWebView(context: Context) : WebView(context) {
   fun setUrl(value: String?) {
     val next = value?.trim().orEmpty()
     if (next.isEmpty() || next == requestedUrl) return
-    if (!isWebUrl(next)) {
-      emitState(loading = false, error = "Only http and https addresses can be opened")
-      return
-    }
     requestedUrl = next
-    loadUrl(next)
+    when (classify(next)) {
+      UrlKind.PAGE -> loadUrl(next)
+      UrlKind.EXTERNAL -> openExternally(next)
+      UrlKind.BLOCKED -> emitState(loading = false, error = "This kind of address is blocked for your safety")
+    }
   }
 
   fun setReloadRequest(value: Int) {
@@ -86,6 +103,17 @@ class BrowserWebView(context: Context) : WebView(context) {
     if (value != lastForward) {
       lastForward = value
       if (value != 0 && canGoForward()) goForward()
+    }
+  }
+
+  /** Links such as mailto:, tel: or an app's own scheme go to the matching app, like a normal browser. */
+  private fun openExternally(target: String) {
+    try {
+      context.startActivity(Intent(Intent.ACTION_VIEW, android.net.Uri.parse(target)).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+    } catch (_: ActivityNotFoundException) {
+      emitState(loading = false, error = "No app can open this address")
+    } catch (_: SecurityException) {
+      emitState(loading = false, error = "This address could not be opened")
     }
   }
 
@@ -113,9 +141,29 @@ class BrowserWebView(context: Context) : WebView(context) {
   companion object {
     const val EVENT_NAME = "topBrowserState"
 
-    fun isWebUrl(value: String): Boolean {
-      val lower = value.lowercase()
-      return lower.startsWith("http://") || lower.startsWith("https://")
+    enum class UrlKind { PAGE, EXTERNAL, BLOCKED }
+
+    /**
+     * Pages load in the window (http, https, about, data, blob, view-source).
+     * Script and local-file/content addresses are blocked, because a page must
+     * never reach the app's private files. Anything else with a scheme is
+     * handed to the app that handles it.
+     */
+    fun classify(value: String): UrlKind {
+      val scheme = value.substringBefore(':', "").lowercase()
+      return when {
+        scheme.isEmpty() || !value.contains(':') -> UrlKind.BLOCKED
+        scheme in setOf("http", "https", "about", "data", "blob", "view-source") -> UrlKind.PAGE
+        scheme in setOf("javascript", "file", "content") -> UrlKind.BLOCKED
+        else -> UrlKind.EXTERNAL
+      }
+    }
+
+    fun isLocalHost(host: String?): Boolean {
+      if (host == null) return false
+      if (host == "localhost" || host.startsWith("127.") || host.startsWith("10.") || host.startsWith("192.168.")) return true
+      val parts = host.split(".")
+      return parts.size == 4 && parts[0] == "172" && (parts[1].toIntOrNull() ?: -1) in 16..31
     }
   }
 }

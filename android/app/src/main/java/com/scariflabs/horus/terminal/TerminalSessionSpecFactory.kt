@@ -317,6 +317,7 @@ class TerminalSessionSpecFactory(
       TerminalRuntimeContract.TOOLCHAIN_TARGET_OPENCODE,
       TerminalRuntimeContract.TOOLCHAIN_TARGET_GEMINI,
       TerminalRuntimeContract.TOOLCHAIN_TARGET_FREEBUFF,
+      TerminalRuntimeContract.TOOLCHAIN_TARGET_OMNIROUTE,
     )
   }
 }

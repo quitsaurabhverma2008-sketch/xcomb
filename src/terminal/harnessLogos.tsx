@@ -15,6 +15,7 @@ export const HARNESS_LOGO_SOURCES = {
   opencode: require('./harness-logos/opencode.png'),
   gemini: require('./harness-logos/gemini.png'),
   freebuff: require('./harness-logos/freebuff.png'),
+  omniroute: require('./harness-logos/omniroute.png'),
 } as const;
 
 export type HarnessLogo = keyof typeof HARNESS_LOGO_SOURCES;

@@ -1238,6 +1238,7 @@ class TerminalSessionService : Service() {
     TerminalRuntimeContract.TOOLCHAIN_TARGET_OPENCODE -> "OpenCode"
     TerminalRuntimeContract.TOOLCHAIN_TARGET_GEMINI -> "Gemini CLI"
     TerminalRuntimeContract.TOOLCHAIN_TARGET_FREEBUFF -> "FreeBuff"
+    TerminalRuntimeContract.TOOLCHAIN_TARGET_OMNIROUTE -> "Omni Router"
     TerminalRuntimeContract.TOOLCHAIN_TARGET_GITHUB -> "GitHub CLI"
     else -> "Bare terminal"
   }
@@ -1389,6 +1390,7 @@ class TerminalSessionService : Service() {
       TerminalRuntimeContract.TOOLCHAIN_TARGET_OPENCODE -> "opencode-install.log"
       TerminalRuntimeContract.TOOLCHAIN_TARGET_GEMINI -> "gemini-install.log"
       TerminalRuntimeContract.TOOLCHAIN_TARGET_FREEBUFF -> "freebuff-install.log"
+      TerminalRuntimeContract.TOOLCHAIN_TARGET_OMNIROUTE -> "omniroute-install.log"
       else -> "alpine-bootstrap.log"
     }
     return File(home, ".cache/horus/$logName")
@@ -1546,7 +1548,8 @@ class TerminalSessionService : Service() {
       target == TerminalRuntimeContract.TOOLCHAIN_TARGET_CODEX ||
       target == TerminalRuntimeContract.TOOLCHAIN_TARGET_OPENCODE ||
       target == TerminalRuntimeContract.TOOLCHAIN_TARGET_GEMINI ||
-      target == TerminalRuntimeContract.TOOLCHAIN_TARGET_FREEBUFF
+      target == TerminalRuntimeContract.TOOLCHAIN_TARGET_FREEBUFF ||
+      target == TerminalRuntimeContract.TOOLCHAIN_TARGET_OMNIROUTE
 
   private fun sessionStartedAt(record: TerminalSessionJournal.Record): String = DateUtils.formatDateTime(
     this,

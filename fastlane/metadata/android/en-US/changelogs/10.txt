@@ -1,0 +1,6 @@
+- Omni Router connector: swipe right from HOME to CONNECTORS. XComb installs and starts it, then opens its dashboard in a small browser window
+- Config page: swipe right again to CONFIG and edit .opencode, .claude, .codex, .freebuff, .gemini and .omniroute files inside XComb
+- Browser: yellow three-dot menu with Split screen (draggable divider) and Small window (movable and resizable); local dev servers and other URL types load, and localhost terminal links open here
+- Terminal select and copy with the COPY key or a long-press
+- Gold/yellow theme, new logo, six home tiles, real Gemini CLI and FreeBuff logos, nine avatars
+- Installing over an older build signed with a different key? Uninstall the old app first

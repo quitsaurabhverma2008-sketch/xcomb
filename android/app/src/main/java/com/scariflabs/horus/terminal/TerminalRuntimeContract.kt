@@ -36,6 +36,7 @@ object TerminalRuntimeContract {
   const val TOOLCHAIN_TARGET_OPENCODE = "opencode"
   const val TOOLCHAIN_TARGET_GEMINI = "gemini"
   const val TOOLCHAIN_TARGET_FREEBUFF = "freebuff"
+  const val TOOLCHAIN_TARGET_OMNIROUTE = "omniroute"
 
   private val TOOLCHAIN_TARGETS = setOf(
     TOOLCHAIN_TARGET_SHELL,
@@ -45,6 +46,7 @@ object TerminalRuntimeContract {
     TOOLCHAIN_TARGET_OPENCODE,
     TOOLCHAIN_TARGET_GEMINI,
     TOOLCHAIN_TARGET_FREEBUFF,
+    TOOLCHAIN_TARGET_OMNIROUTE,
   )
 
   fun isValidRuntimeState(state: String?): Boolean = RUNTIME_STATES.contains(state)

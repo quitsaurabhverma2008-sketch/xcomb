@@ -1276,7 +1276,8 @@ class TerminalRuntimeModule(
     target == TerminalRuntimeContract.TOOLCHAIN_TARGET_CODEX ||
     target == TerminalRuntimeContract.TOOLCHAIN_TARGET_OPENCODE ||
     target == TerminalRuntimeContract.TOOLCHAIN_TARGET_GEMINI ||
-    target == TerminalRuntimeContract.TOOLCHAIN_TARGET_FREEBUFF
+    target == TerminalRuntimeContract.TOOLCHAIN_TARGET_FREEBUFF ||
+    target == TerminalRuntimeContract.TOOLCHAIN_TARGET_OMNIROUTE
 
   override fun invalidate() {
     invalidated.set(true)
@@ -1421,12 +1422,19 @@ class TerminalRuntimeModule(
     } catch (_: Exception) {
       null
     } ?: RootfsCatalog.DISTRO_ALPINE
-    return GuestFileBrowser(homeRoot = storePaths.homeFor(distro), workspaceRoot = storePaths.defaultWorkspace)
+    val agentRoots = DistroStorePaths.HARNESS_HOME_KEYS.associate { key ->
+      "${GuestFileBrowser.AGENT_ROOT_PREFIX}$key" to storePaths.harnessHomeFor(distro, key)
+    }
+    return GuestFileBrowser(homeRoot = storePaths.homeFor(distro), workspaceRoot = storePaths.defaultWorkspace, agentRoots = agentRoots)
   }
 
   /** Parses the shared guest file request; null means invalid_request. */
   private fun guestFileRequest(request: ReadableMap): Pair<String, List<String>>? {
-    val root = stringField(request, "root")?.takeIf { it == "home" || it == "workspace" } ?: return null
+    val root = stringField(request, "root")?.takeIf {
+      it == "home" || it == "workspace" ||
+        (it.startsWith(GuestFileBrowser.AGENT_ROOT_PREFIX) &&
+          it.removePrefix(GuestFileBrowser.AGENT_ROOT_PREFIX) in DistroStorePaths.HARNESS_HOME_KEYS)
+    } ?: return null
     if (!request.hasKey("path") || request.getType("path") != ReadableType.Array) return null
     val array = request.getArray("path") ?: return null
     if (array.size() > GUEST_FILE_MAX_PATH_COMPONENTS) return null
@@ -1519,6 +1527,29 @@ class TerminalRuntimeModule(
             putString("status", "success")
             putString("base64", Base64.encodeToString(outcome.bytes, Base64.NO_WRAP))
             putDouble("sizeBytes", outcome.sizeBytes.toDouble())
+          }
+        }
+      }
+    }
+  }
+
+  /** Saves edited text into an agent's config files (agent roots only, 64 KiB max). */
+  override fun writeGuestFile(request: ReadableMap, promise: Promise) {
+    withRequestId(request, promise, ::guestFileError, echoRequestIdWhenInvalidated = true) { requestId ->
+      val parsed = guestFileRequest(request)
+      val content = stringField(request, "content")
+      if (parsed == null || content == null || !parsed.first.startsWith(GuestFileBrowser.AGENT_ROOT_PREFIX)) {
+        promise.resolve(guestFileError(requestId, "invalid_request"))
+        return
+      }
+      val (root, path) = parsed
+      val bytes = content.toByteArray(Charsets.UTF_8)
+      runGuestFileQuery(requestId, promise) {
+        when (val outcome = guestFileBrowser().write(root, path, bytes)) {
+          is GuestFileBrowser.WriteOutcome.Failure -> guestFileError(requestId, outcome.errorCode)
+          is GuestFileBrowser.WriteOutcome.Success -> Arguments.createMap().apply {
+            putString("requestId", requestId)
+            putString("status", "success")
           }
         }
       }

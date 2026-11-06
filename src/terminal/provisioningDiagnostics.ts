@@ -2,7 +2,7 @@
 export const MAX_DIAGNOSTIC_LOG_CHARS = 4096;
 export const EMPTY_DIAGNOSTICS = 'No diagnostic output was captured.';
 export const OMITTED_DIAGNOSTICS = 'Installer output was omitted because it contained no recognized safe diagnostic message.';
-export const PROVISIONING_STAGES = ['start', 'apk', 'apk_failed', 'base_ready', 'github', 'github_failed', 'claude', 'claude_failed', 'codex', 'codex_failed', 'opencode', 'opencode_failed', 'gemini', 'gemini_failed', 'freebuff', 'freebuff_failed', 'normalize', 'normalize_failed', 'verify', 'verify_failed', 'ready'] as const;
+export const PROVISIONING_STAGES = ['start', 'apk', 'apk_failed', 'base_ready', 'github', 'github_failed', 'claude', 'claude_failed', 'codex', 'codex_failed', 'opencode', 'opencode_failed', 'gemini', 'gemini_failed', 'freebuff', 'freebuff_failed', 'omniroute', 'omniroute_failed', 'normalize', 'normalize_failed', 'verify', 'verify_failed', 'ready'] as const;
 export const PROVISIONING_OUTCOMES = ['failed', 'timed_out', 'cancelled', 'spawn_failed', 'not_started', 'incomplete'] as const;
 export type ProvisioningDiagnostics = Readonly<{
   outcome: typeof PROVISIONING_OUTCOMES[number];

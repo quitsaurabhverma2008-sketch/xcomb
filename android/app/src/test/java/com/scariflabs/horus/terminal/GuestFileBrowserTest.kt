@@ -160,6 +160,25 @@ class GuestFileBrowserTest {
   }
 
   @Test
+  fun writesOnlyInsideAgentRootsAndCreatesNewFiles() {
+    val agent = temp.newFolder("agent-home")
+    val writer = GuestFileBrowser(home, workspace, mapOf("agent:claude" to agent))
+
+    assertEquals(GuestFileBrowser.WriteOutcome.Success, writer.write("agent:claude", listOf("settings.json"), "{}".toByteArray()))
+    assertEquals("{}", File(agent, "settings.json").readText())
+    assertEquals(GuestFileBrowser.WriteOutcome.Success, writer.write("agent:claude", listOf("settings.json"), "{\"x\":1}".toByteArray()))
+    assertEquals("{\"x\":1}", File(agent, "settings.json").readText())
+
+    assertEquals(GuestFileBrowser.WriteOutcome.Failure("invalid_path"), writer.write("home", listOf("nope"), "x".toByteArray()))
+    assertEquals(GuestFileBrowser.WriteOutcome.Failure("invalid_path"), writer.write("agent:claude", listOf("..", "escape"), "x".toByteArray()))
+
+    val outside = temp.newFile("outside.txt").apply { writeText("secret") }
+    Files.createSymbolicLink(File(agent, "link").toPath(), outside.toPath())
+    assertEquals(GuestFileBrowser.WriteOutcome.Failure("invalid_path"), writer.write("agent:claude", listOf("link"), "x".toByteArray()))
+    assertEquals("secret", outside.readText())
+  }
+
+  @Test
   fun returnsNonUtf8ContentAsRawBytesForTheJsClassifier() {
     val bytes = byteArrayOf(0x66, 0xff.toByte(), 0x00, 0x0a)
     File(workspace, "blob.bin").writeBytes(bytes)

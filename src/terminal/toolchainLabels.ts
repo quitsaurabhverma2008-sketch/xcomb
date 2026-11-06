@@ -7,6 +7,7 @@ function toolchainName(target: TerminalToolchainTarget, shellLabel: string): str
   if (target === 'opencode') return 'OpenCode';
   if (target === 'gemini') return 'Gemini CLI';
   if (target === 'freebuff') return 'FreeBuff';
+  if (target === 'omniroute') return 'Omni Router';
   if (target === 'github') return 'GitHub CLI';
   return shellLabel;
 }

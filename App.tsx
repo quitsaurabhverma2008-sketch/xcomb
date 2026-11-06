@@ -22,6 +22,8 @@ import {AddUserScreen} from './src/ui/AddUserScreen';
 import {ProjectHubScreen} from './src/ui/ProjectHubScreen';
 import {LoginScreen} from './src/ui/LoginScreen';
 import {FileExplorerScreen} from './src/ui/FileExplorerScreen';
+import {ConfigEditorScreen} from './src/ui/ConfigEditorScreen';
+import type {AgentConfig} from './src/files/agentConfigs';
 import {GithubAccountScreen} from './src/ui/GithubAccountScreen';
 import {SessionSettingsScreen} from './src/ui/SessionSettingsScreen';
 import {UserAccountScreen} from './src/ui/UserAccountScreen';
@@ -33,7 +35,7 @@ import {consumeLaunchSessionId} from './src/terminal/session/launchSession';
 import {sessionTitle} from './src/terminal/toolchainLabels';
 import {createRequestIdFactory} from './src/terminal/requestIds';
 
-type AppRoute = 'boot' | 'onboarding' | 'login' | 'home' | 'settings' | 'user' | 'add-user' | 'github-account' | 'projects' | 'files' | 'terminal';
+type AppRoute = 'boot' | 'onboarding' | 'login' | 'home' | 'settings' | 'user' | 'add-user' | 'github-account' | 'projects' | 'files' | 'config' | 'terminal';
 type BootState = 'checking' | 'installing' | 'error';
 
 const BOOT_REQUEST_ID = 'horus-bootstrap-1';
@@ -64,6 +66,7 @@ function isHarnessTarget(target: MetroLaunchTarget): boolean {
 
 function App(): React.JSX.Element {
   const [route, setRoute] = React.useState<AppRoute>('boot');
+  const [configAgent, setConfigAgent] = React.useState<AgentConfig | undefined>(undefined);
   const routeRef = React.useRef(route);
   routeRef.current = route;
   const [bootState, setBootState] = React.useState<BootState>('checking');
@@ -298,7 +301,7 @@ function App(): React.JSX.Element {
     return true;
   }, [sessionClient, setPendingCompletion]);
 
-  const authenticated = route === 'home' || route === 'settings' || route === 'user' || route === 'add-user' || route === 'github-account' || route === 'projects' || route === 'files' || route === 'terminal';
+  const authenticated = route === 'home' || route === 'settings' || route === 'user' || route === 'add-user' || route === 'github-account' || route === 'projects' || route === 'files' || route === 'config' || route === 'terminal';
   useBackgroundSessionLock(!__DEV__ && profile !== null && authenticated, lockSession);
   useUnlockGrantAppState(!__DEV__ && profile !== null && authenticated);
 
@@ -656,6 +659,10 @@ function App(): React.JSX.Element {
         onOpenGithubAccount={openGithubAccount}
         onOpenSettings={openSettings}
         onOpen={openTarget}
+        onOpenConfig={agent => {
+          setConfigAgent(agent);
+          setRoute('config');
+        }}
         onResumeSession={resumeRecentSession}
         onTerminateSession={terminateRecentSession}
       />
@@ -720,6 +727,9 @@ function App(): React.JSX.Element {
   }
   if (route === 'files') {
     return <FileExplorerScreen onBack={() => setRoute('home')} />;
+  }
+  if (route === 'config' && configAgent !== undefined) {
+    return <ConfigEditorScreen agent={configAgent} onBack={() => setRoute('home')} />;
   }
   const heldCompletion = terminalTarget.completionMarker !== undefined && pendingCompletion?.marker === terminalTarget.completionMarker ? pendingCompletion.kind : undefined;
   const clonePending = heldCompletion === 'clone';

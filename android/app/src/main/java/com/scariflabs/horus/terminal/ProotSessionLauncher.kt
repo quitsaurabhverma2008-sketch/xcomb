@@ -1259,11 +1259,13 @@ class ProotSessionLauncher(
       TerminalRuntimeContract.TOOLCHAIN_TARGET_OPENCODE,
       TerminalRuntimeContract.TOOLCHAIN_TARGET_GEMINI,
       TerminalRuntimeContract.TOOLCHAIN_TARGET_FREEBUFF,
+      TerminalRuntimeContract.TOOLCHAIN_TARGET_OMNIROUTE,
     )
     /** npm package each generic npm-installed agent is published as. */
     private val NPM_AGENT_PACKAGES = mapOf(
       TerminalRuntimeContract.TOOLCHAIN_TARGET_GEMINI to "@google/gemini-cli",
       TerminalRuntimeContract.TOOLCHAIN_TARGET_FREEBUFF to "freebuff",
+      TerminalRuntimeContract.TOOLCHAIN_TARGET_OMNIROUTE to "omniroute",
     )
     private val ROOT_HELPER_FILES = listOf("sudo" to GUEST_SUDO_PATH, "sudo-helper" to GUEST_ROOT_HELPER_PATH)
     const val HOST_PROC = "/proc"
@@ -1728,7 +1730,7 @@ ${PACKAGE_LOCK_SCRIPT.prependIndent("      ")}
       export PATH=/root/.local/bin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
       target=${'$'}{HORUS_TOOLCHAIN_TARGET:-shell}
       case "${'$'}target" in
-        shell|github|claude|codex|opencode|gemini|freebuff) ;;
+        shell|github|claude|codex|opencode|gemini|freebuff|omniroute) ;;
         *) exit 20 ;;
       esac
       printf '%s\n' "HORUS_INSTALL_TARGET=${'$'}target"
@@ -2030,11 +2032,12 @@ ${PACKAGE_LOCK_SCRIPT.prependIndent("      ")}
         opencode_payload_valid=true
       fi
 
-      # Gemini CLI and FreeBuff are plain npm packages: install into the
+      # Gemini CLI, FreeBuff and Omni Router are plain npm packages: install into the
       # user prefix, then write a portable launcher for the bin npm declares.
-      if [ "${'$'}target" = gemini ] || [ "${'$'}target" = freebuff ]; then
+      if [ "${'$'}target" = gemini ] || [ "${'$'}target" = freebuff ] || [ "${'$'}target" = omniroute ]; then
         case "${'$'}target" in
           gemini) npm_agent_pkg=@google/gemini-cli; npm_agent_label="Gemini CLI" ;;
+          omniroute) npm_agent_pkg=omniroute; npm_agent_label="Omni Router" ;;
           *) npm_agent_pkg=freebuff; npm_agent_label=FreeBuff ;;
         esac
         npm_agent_dir=/root/.local/lib/node_modules/${'$'}npm_agent_pkg
@@ -2059,6 +2062,11 @@ ${PACKAGE_LOCK_SCRIPT.prependIndent("      ")}
           exit 27
         fi
         chmod u+rx "${'$'}npm_agent_dir/${'$'}npm_agent_bin" || true
+        if [ "${'$'}target" = omniroute ]; then
+          # Omni Router needs Node 22.22.2+ (not 23) or 24+. Say so plainly
+          # instead of leaving a blank dashboard if the guest Node is older.
+          node -e 'const v=process.versions.node.split(".").map(Number);const ok=(v[0]===22&&(v[1]>22||(v[1]===22&&v[2]>=2)))||v[0]>=24;if(!ok){console.log("Warning: Omni Router wants Node 22.22.2+ or 24+, this is "+process.versions.node+".")}' || true
+        fi
         npm_agent_launcher=/root/.local/bin/${'$'}target
         rm -f "${'$'}npm_agent_launcher"
         printf '%s\n' '#!/bin/sh' "exec /usr/bin/node \"\${'$'}HOME/.local/lib/node_modules/${'$'}npm_agent_pkg/${'$'}npm_agent_bin\" \"\${'$'}@\"" > "${'$'}npm_agent_launcher"
@@ -2103,7 +2111,7 @@ EOF
             mark_provision_stage normalize_failed
             exit 25
           fi
-        elif [ "${'$'}target" = gemini ] || [ "${'$'}target" = freebuff ]; then
+        elif [ "${'$'}target" = gemini ] || [ "${'$'}target" = freebuff ] || [ "${'$'}target" = omniroute ]; then
           test -x /root/.local/bin/${'$'}target
         elif [ "${'$'}target" = codex ]; then
           if ! {
@@ -2167,7 +2175,7 @@ EOF
           mark_provision_stage codex_failed
           exit 23
         fi
-      elif [ "${'$'}target" = gemini ] || [ "${'$'}target" = freebuff ]; then
+      elif [ "${'$'}target" = gemini ] || [ "${'$'}target" = freebuff ] || [ "${'$'}target" = omniroute ]; then
         test -x /root/.local/bin/${'$'}target
       else
         test -x /root/.local/bin/opencode
