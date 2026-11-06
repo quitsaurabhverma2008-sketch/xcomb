@@ -49,7 +49,9 @@ sandbox, with a warm black and yellow interface built for a touch screen.
 | :-- | :-- |
 | **Real Linux** | Alpine Linux ARM64, unpacked from a pinned minirootfs and checked against SHA-256 before it runs. `git`, `curl`, `jq`, `rg`, `python3`, Node and `apk add` work like a normal box. |
 | **A terminal that behaves** | Native PTY and renderer with resize, Ctrl-C, and job control. The key bar adds Esc, Tab, arrows, paste, and sticky Ctrl/Alt for everything a phone keyboard leaves out. Select text with the COPY key or a long-press. |
-| **A browser built in** | Tap the yellow three-dot menu at the top-left of the terminal, then choose **Split screen** (browser on top, terminal below, with a draggable divider) or **Small window** (a floating browser you can move and resize). Preview `localhost` dev servers without leaving XComb. |
+| **A browser built in** | Tap the yellow three-dot menu at the top-left of the terminal, then choose **Split screen** (browser on top, terminal below, with a draggable divider) or **Small window** (a floating browser you can move and resize). Local http(s) dev servers, `about:`, `data:` and other URL types load; localhost links in the terminal open here too. |
+| **Omni Router connector** | Swipe right from HOME to **CONNECTORS**. Open Omni Router; XComb installs and starts it, then opens its dashboard in a small browser window. |
+| **Config editor** | Swipe right again to **CONFIG**. Open the `.opencode`, `.claude`, `.codex`, `.freebuff`, `.gemini` and `.omniroute` folders, open a file, edit it and save it without leaving XComb. |
 | **Five agents, one tap** | Claude Code, Codex, OpenCode, Gemini CLI and FreeBuff each install on first open, with the installer output right in the terminal. |
 | **Sessions that survive** | Terminals run in a foreground service in their own process. Lock the phone or close the UI; the agent keeps working and notifies you when it needs an answer. |
 | **Your projects** | Create a folder, clone any HTTPS or SSH Git URL, or sign in to GitHub and pick from your repositories. Everything lives under `/workspace/projects`. |
@@ -77,7 +79,7 @@ stay inside each CLI; XComb never handles provider passwords.
 ### Download the APK
 
 1. Open the [latest release](https://github.com/quitsaurabhverma2008-sketch/xcomb/releases/latest).
-2. Download **`XComb-1.1.3.apk`**.
+2. Download **`XComb-1.1.4.apk`**.
 3. **Uninstall any older build first.** CI builds are signed with a per-run
    throwaway key, so Android refuses to update an app signed by another key.
    Export anything you need from `/workspace` before uninstalling.
@@ -107,6 +109,15 @@ The home screen shows your Linux user, GitHub account, storage, RAM, network and
 battery state, the six session tiles, and any sessions that are already running.
 **Settings** is in the top right; **Browse your files** opens the read-only file
 browser.
+
+### Connectors and config
+
+Swipe right from HOME to **CONNECTORS**. Omni Router installs and starts on first
+open, then its dashboard opens in a small browser window.
+
+Swipe right again to **CONFIG**. Open the `.opencode`, `.claude`, `.codex`,
+`.freebuff`, `.gemini` and `.omniroute` folders, open a text file, edit it and
+save it without leaving XComb.
 
 ### Sessions
 
@@ -266,7 +277,7 @@ hide a buildable APK.
 | :-- | :-- |
 | App label | **XComb** |
 | Application ID | Unchanged from the MIT-licensed fork base — declared in [`android/app/build.gradle`](android/app/build.gradle) |
-| Version | `1.1.3` (versionCode `9`) |
+| Version | `1.1.4` (versionCode `10`) |
 | ABI | `arm64-v8a` only |
 | Min / target SDK | 24 / 36 |
 | Source | <https://github.com/quitsaurabhverma2008-sketch/xcomb> |
