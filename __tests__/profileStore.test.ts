@@ -2,12 +2,12 @@ import {NativeModules} from 'react-native';
 import {lockedOutMessage, readUserProfile, saveUserProfile, usernameProblem, verifyUserPassword} from '../src/profile/profileStore';
 
 function withNativeResponse(response: unknown): void {
-  NativeModules.HorusDevice = {verifyPassword: jest.fn(async () => response)};
+  NativeModules.XCombDevice = {verifyPassword: jest.fn(async () => response)};
 }
 
 describe('verifyUserPassword', () => {
   afterEach(() => {
-    delete NativeModules.HorusDevice;
+    delete NativeModules.XCombDevice;
   });
 
   it('maps native results to success, incorrect, and locked', async () => {
@@ -22,7 +22,7 @@ describe('verifyUserPassword', () => {
   it('treats malformed or failing native responses as incorrect', async () => {
     withNativeResponse({status: 'locked'});
     await expect(verifyUserPassword('alpine', 'secret')).resolves.toEqual({kind: 'incorrect'});
-    NativeModules.HorusDevice = {verifyPassword: jest.fn(async () => { throw new Error('boom'); })};
+    NativeModules.XCombDevice = {verifyPassword: jest.fn(async () => { throw new Error('boom'); })};
     await expect(verifyUserPassword('alpine', 'secret')).resolves.toEqual({kind: 'incorrect'});
   });
 });
@@ -36,12 +36,12 @@ describe('lockedOutMessage', () => {
 
 describe('verifyUserPassword request', () => {
   afterEach(() => {
-    delete NativeModules.HorusDevice;
+    delete NativeModules.XCombDevice;
   });
 
   it('asks native about one distribution\'s user', async () => {
     const verifyPassword = jest.fn(async () => ({status: 'success'}));
-    NativeModules.HorusDevice = {verifyPassword};
+    NativeModules.XCombDevice = {verifyPassword};
     await verifyUserPassword('debian', 'secret');
     expect(verifyPassword).toHaveBeenCalledWith({distro: 'debian', password: 'secret'});
   });
@@ -49,11 +49,11 @@ describe('verifyUserPassword request', () => {
 
 describe('readUserProfile', () => {
   afterEach(() => {
-    delete NativeModules.HorusDevice;
+    delete NativeModules.XCombDevice;
   });
 
   function withProfile(response: unknown): void {
-    NativeModules.HorusDevice = {getProfile: jest.fn(async () => response)};
+    NativeModules.XCombDevice = {getProfile: jest.fn(async () => response)};
   }
 
   it('reads one user per distribution, alpine first', async () => {
@@ -61,13 +61,13 @@ describe('readUserProfile', () => {
       configured: true,
       hasPassword: true,
       users: [
-        {distro: 'alpine', username: 'horus', avatar: 'falcon'},
+        {distro: 'alpine', username: 'xcomb', avatar: 'falcon'},
         {distro: 'debian', username: 'deb', avatar: 'scarab'},
       ],
     });
     await expect(readUserProfile()).resolves.toEqual({
       users: [
-        {distro: 'alpine', username: 'horus', avatar: 'falcon'},
+        {distro: 'alpine', username: 'xcomb', avatar: 'falcon'},
         {distro: 'debian', username: 'deb', avatar: 'scarab'},
       ],
     });
@@ -93,24 +93,24 @@ describe('readUserProfile', () => {
 
 describe('saveUserProfile', () => {
   afterEach(() => {
-    delete NativeModules.HorusDevice;
+    delete NativeModules.XCombDevice;
   });
 
   it('sends the whole user and reports native error codes', async () => {
     const saveProfile = jest.fn(async () => ({status: 'success'}));
-    NativeModules.HorusDevice = {saveProfile};
-    const user = {distro: 'debian', username: 'deb', avatar: 'scarab', password: 'horus'} as const;
+    NativeModules.XCombDevice = {saveProfile};
+    const user = {distro: 'debian', username: 'deb', avatar: 'scarab', password: 'xcomb'} as const;
     await expect(saveUserProfile(user)).resolves.toEqual({kind: 'success'});
     expect(saveProfile).toHaveBeenCalledWith(user);
 
-    NativeModules.HorusDevice = {saveProfile: jest.fn(async () => ({status: 'error', errorCode: 'exists'}))};
+    NativeModules.XCombDevice = {saveProfile: jest.fn(async () => ({status: 'error', errorCode: 'exists'}))};
     await expect(saveUserProfile(user)).resolves.toEqual({kind: 'error', code: 'exists'});
   });
 
   it('rejects bad usernames and passwords before asking native', async () => {
     const saveProfile = jest.fn();
-    NativeModules.HorusDevice = {saveProfile};
-    await expect(saveUserProfile({distro: 'alpine', username: 'root', avatar: 'falcon', password: 'horus'}))
+    NativeModules.XCombDevice = {saveProfile};
+    await expect(saveUserProfile({distro: 'alpine', username: 'root', avatar: 'falcon', password: 'xcomb'}))
       .resolves.toEqual({kind: 'error', code: 'invalid_username'});
     await expect(saveUserProfile({distro: 'alpine', username: 'ok', avatar: 'falcon', password: 'abc'}))
       .resolves.toEqual({kind: 'error', code: 'invalid_password'});
@@ -120,7 +120,7 @@ describe('saveUserProfile', () => {
 
 describe('usernameProblem', () => {
   it('matches the native username rules', () => {
-    for (const name of ['vishesh', 'horus', 'dev_1', '_x', 'a-b']) expect(usernameProblem(name)).toBeUndefined();
+    for (const name of ['vishesh', 'xcomb', 'dev_1', '_x', 'a-b']) expect(usernameProblem(name)).toBeUndefined();
     for (const name of ['', 'Vishesh', '1abc', 'root', 'nobody', 'harness_claude', 'a b', 'x'.repeat(33)]) {
       expect(usernameProblem(name)).toBeDefined();
     }

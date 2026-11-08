@@ -3,7 +3,7 @@ import ReactTestRenderer from 'react-test-renderer';
 import type {ProfileUser} from '../src/profile/profileStore';
 import {AddUserScreen, type AddUserActions} from '../src/ui/AddUserScreen';
 
-const ALPINE_USER: ProfileUser = {distro: 'alpine', username: 'horus', avatar: 'falcon'};
+const ALPINE_USER: ProfileUser = {distro: 'alpine', username: 'xcomb', avatar: 'falcon'};
 
 function fakeActions(overrides: Partial<AddUserActions> = {}) {
   return {

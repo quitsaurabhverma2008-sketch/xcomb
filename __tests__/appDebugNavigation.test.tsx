@@ -101,7 +101,7 @@ jest.mock('../src/ui/MetroHomeScreen', () => ({
     require('react').createElement(
       require('react-native').Text,
       {testID: 'metro-profile'},
-      'HORUS',
+      'XCOMB',
     ),
     require('react').createElement(
       require('react-native').Pressable,
@@ -189,8 +189,8 @@ jest.mock('../src/ui/ProjectHubScreen', () => ({
   ),
 }));
 
-jest.mock('../src/ui/FileExplorerScreen', () => ({
-  FileExplorerScreen: ({onBack}: {onBack: () => void}) => require('react').createElement(
+jest.mock('../src/ui/FileManagerScreen', () => ({
+  FileManagerScreen: ({onBack}: {onBack: () => void}) => require('react').createElement(
     require('react-native').Pressable,
     {testID: 'file-explorer-screen', onPress: onBack},
   ),
@@ -234,7 +234,7 @@ describe('debug navigation', () => {
       for (let index = 0; index < 8; index += 1) await Promise.resolve();
     });
     expect(renderer.root.findAllByProps({testID: 'metro-home'}).length).toBeGreaterThan(0);
-    expect(renderer.root.findByProps({testID: 'metro-profile'}).props.children).toBe('HORUS');
+    expect(renderer.root.findByProps({testID: 'metro-profile'}).props.children).toBe('XCOMB');
 
     await ReactTestRenderer.act(async () => {
       renderer.unmount();
@@ -283,7 +283,7 @@ describe('debug navigation', () => {
   });
 
   test.each(['success', 'error', 'switch'] as const)('logout and user switch stop sessions with the appropriate SSH opt-in (%s)', async kind => {
-    jest.mocked(readUserProfile).mockResolvedValue({users: [{distro: 'alpine', username: 'horus', avatar: 'falcon'}]});
+    jest.mocked(readUserProfile).mockResolvedValue({users: [{distro: 'alpine', username: 'xcomb', avatar: 'falcon'}]});
     const runtime = await readTerminalRuntimeStatus();
     if (runtime.kind !== 'success') throw new Error('runtime fixture unavailable');
     jest.mocked(readTerminalRuntimeStatus).mockResolvedValueOnce({...runtime, activeDistro: 'alpine'});
@@ -451,7 +451,7 @@ describe('debug navigation', () => {
     expect(githubLoginTerminal.props.screenTitle).toBe('GitHub Login');
     expect(githubLoginTerminal.props.sessionCommand).toContain('gh auth login');
     expect(githubLoginTerminal.props.sessionCommand).toContain('/workspace/projects');
-    expect(githubLoginTerminal.props.completionMarker).toMatch(/^HORUS_GITHUB_LOGIN_COMPLETE_/);
+    expect(githubLoginTerminal.props.completionMarker).toMatch(/^XCOMB_GITHUB_LOGIN_COMPLETE_/);
     expect(githubLoginTerminal.props.sessionCommand).toContain(githubLoginTerminal.props.completionMarker);
     expect(renderer.root.findAllByProps({testID: 'project-hub-screen'})).toHaveLength(0);
 
@@ -576,7 +576,7 @@ describe('debug navigation', () => {
     expect(terminal.props.screenTitle).toBe('GitHub Logout');
     expect(terminal.props.sessionCommand).toContain('gh auth logout --hostname github.com --user');
     expect(terminal.props.sessionCommand).toContain('octocat');
-    expect(terminal.props.completionMarker).toMatch(/^HORUS_GITHUB_LOGOUT_COMPLETE_/);
+    expect(terminal.props.completionMarker).toMatch(/^XCOMB_GITHUB_LOGOUT_COMPLETE_/);
     expect(terminal.props.stopSessionOnUnmount).toBe(true);
     expect(terminal.props.onBack).toBeUndefined();
     expect(clearStoredGithubAccount).not.toHaveBeenCalled();
@@ -650,7 +650,7 @@ describe('debug navigation', () => {
     expect(terminal.props.sessionCommand).toContain('normalize_git_remote');
     expect(terminal.props.sessionCommand).toContain('That workspace folder already exists but is not a checkout of this repository. It was left unchanged.');
     expect(terminal.props.stopSessionOnUnmount).toBe(true);
-    expect(terminal.props.completionMarker).toMatch(/^HORUS_PROJECT_CLONE_COMPLETE_/);
+    expect(terminal.props.completionMarker).toMatch(/^XCOMB_PROJECT_CLONE_COMPLETE_/);
 
     await ReactTestRenderer.act(async () => {
       renderer.root.findByProps({testID: 'debug-terminal-completion'}).props.onPress();

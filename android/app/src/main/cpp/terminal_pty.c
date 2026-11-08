@@ -69,7 +69,7 @@ static void reset_signal_dispositions(void) {
  * matching shell conventions.
  */
 JNIEXPORT jintArray JNICALL
-Java_com_scariflabs_horus_terminal_TerminalPtyJni_createSubprocess(
+Java_com_scariflabs_xcomb_terminal_TerminalPtyJni_createSubprocess(
     JNIEnv *env, jclass clazz, jobjectArray argv, jstring cwd,
     jobjectArray envp, jint rows, jint cols) {
   (void)clazz;
@@ -197,7 +197,7 @@ oom:
 
 /* Updates the pty window size (TIOCSWINSZ); returns 0 or -(errno). */
 JNIEXPORT jint JNICALL
-Java_com_scariflabs_horus_terminal_TerminalPtyJni_setWindowSize(JNIEnv *env,
+Java_com_scariflabs_xcomb_terminal_TerminalPtyJni_setWindowSize(JNIEnv *env,
                                                         jclass clazz,
                                                         jint master_fd,
                                                         jint rows, jint cols) {
@@ -217,7 +217,7 @@ Java_com_scariflabs_horus_terminal_TerminalPtyJni_setWindowSize(JNIEnv *env,
  * failure, outside the signal range.
  */
 JNIEXPORT jint JNICALL
-Java_com_scariflabs_horus_terminal_TerminalPtyJni_waitFor(JNIEnv *env, jclass clazz,
+Java_com_scariflabs_xcomb_terminal_TerminalPtyJni_waitFor(JNIEnv *env, jclass clazz,
                                                   jint pid) {
   (void)env;
   (void)clazz;
@@ -234,7 +234,7 @@ Java_com_scariflabs_horus_terminal_TerminalPtyJni_waitFor(JNIEnv *env, jclass cl
 
 /* Closes a descriptor; returns 0 or -(errno). */
 JNIEXPORT jint JNICALL
-Java_com_scariflabs_horus_terminal_TerminalPtyJni_closeFd(JNIEnv *env, jclass clazz,
+Java_com_scariflabs_xcomb_terminal_TerminalPtyJni_closeFd(JNIEnv *env, jclass clazz,
                                                   jint fd) {
   (void)env;
   (void)clazz;
@@ -277,7 +277,7 @@ static size_t linger_read(int fd, char *into, size_t space) {
  * closed), or -(errno) on failure.
  */
 JNIEXPORT jint JNICALL
-Java_com_scariflabs_horus_terminal_TerminalPtyJni_readMaster(JNIEnv *env, jclass clazz,
+Java_com_scariflabs_xcomb_terminal_TerminalPtyJni_readMaster(JNIEnv *env, jclass clazz,
                                                      jint fd,
                                                      jbyteArray buffer) {
   (void)clazz;
@@ -316,7 +316,7 @@ Java_com_scariflabs_horus_terminal_TerminalPtyJni_readMaster(JNIEnv *env, jclass
  * -(errno); the caller loops until every byte is accepted.
  */
 JNIEXPORT jint JNICALL
-Java_com_scariflabs_horus_terminal_TerminalPtyJni_writeMaster(JNIEnv *env, jclass clazz,
+Java_com_scariflabs_xcomb_terminal_TerminalPtyJni_writeMaster(JNIEnv *env, jclass clazz,
                                                       jint fd,
                                                       jbyteArray buffer,
                                                       jint offset, jint count) {

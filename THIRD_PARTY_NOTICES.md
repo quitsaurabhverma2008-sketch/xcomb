@@ -1,10 +1,10 @@
 # Terminal emulator dependencies
 
-Horus uses `@xterm/headless` 6.0.0 and `@xterm/addon-unicode11` 0.9.0
+XComb uses `@xterm/headless` 6.0.0 and `@xterm/addon-unicode11` 0.9.0
 from [xterm.js](https://github.com/xtermjs/xterm.js). Versions and integrity
 hashes are pinned in `package-lock.json`. The headless core supplies VT parsing
 and cell buffers; the Unicode addon supplies character widths. The React Native
-cell renderer is part of Horus.
+cell renderer is part of XComb.
 
 Upstream license: <https://github.com/xtermjs/xterm.js/blob/6.0.0/LICENSE>
 
@@ -45,7 +45,7 @@ Font License, Version 1.1; the full license text ships next to the font as
 
 # xz decompressor
 
-Horus uses [XZ for Java](https://github.com/tukaani-project/xz-java) 1.10
+XComb uses [XZ for Java](https://github.com/tukaani-project/xz-java) 1.10
 (`org.tukaani:xz` from Maven Central) to unpack `.tar.xz` rootfs archives.
 
 Upstream license: <https://github.com/tukaani-project/xz-java/blob/v1.10/COPYING>
@@ -69,7 +69,7 @@ CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 # Avatar hieroglyphs
 
 The nine user avatars in `assets/avatars/` (falcon, ibis, jackal, cat, cobra,
-scarab, lotus, papyrus, sun disk) were generated for Horus with OpenAI's image
+scarab, lotus, papyrus, sun disk) were generated for XComb with OpenAI's image
 generation through Codex CLI, from the prompt in
 `assets/avatars/source/PROMPT.md`. The 1024 px originals are in
 `assets/avatars/source/`; the app ships transparent 96 dp copies cut from them.

@@ -50,8 +50,8 @@ export function RemoteAccessPanel({
   }, [apply, read]);
 
   // Follow the server closely while it installs or starts. Otherwise check
-  // now and then: a paired computer can turn it off (`horus stop`) or on
-  // (`horus pair`) while this screen is open.
+  // now and then: a paired computer can turn it off (`xcomb stop`) or on
+  // (`xcomb pair`) while this screen is open.
   const transitioning = snapshot?.enabled === true && (snapshot.state === 'starting' || snapshot.state === 'installing' || snapshot.state === 'stopped');
   React.useEffect(() => {
     const timer = setInterval(() => {
@@ -71,7 +71,7 @@ export function RemoteAccessPanel({
   const computers = snapshot?.computers ?? [];
   return (
     <SettingsSection
-      footer={error && snapshot !== undefined ? 'Could not update remote access. Try again.' : 'Optional. Run `horus pair` on a computer connected over USB to get a shell here over SSH. Only computers paired with your Horus password can log in, and nothing listens on Wi-Fi.'}
+      footer={error && snapshot !== undefined ? 'Could not update remote access. Try again.' : 'Optional. Run `xcomb pair` on a computer connected over USB to get a shell here over SSH. Only computers paired with your XComb password can log in, and nothing listens on Wi-Fi.'}
       footerTone={error && snapshot !== undefined ? 'danger' : 'muted'}
       testID="remote-access-panel"
       title="REMOTE ACCESS">

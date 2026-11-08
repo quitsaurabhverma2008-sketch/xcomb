@@ -7,13 +7,13 @@ logs, or affected users' information in public Issues or Discussions.
 
 As checked on October 18, 2026, GitHub private vulnerability reporting is
 **enabled** for this repository. Use **Report a vulnerability** on the
-[Security page](https://github.com/scarif-labs/horus/security) to send a private
+[Security page](https://github.com/quitsaurabhverma2008-sketch/xcomb/security) to send a private
 report. Do not assume a public issue is private.
 
 If the private form becomes unavailable, you may post only a minimal request for a private
 security reporting channel, without details that identify or enable the
 vulnerability. Wait for a maintainer to establish that route before sending
-sensitive information. Do not send a Horus vulnerability to GitHub's own bug
+sensitive information. Do not send a XComb vulnerability to GitHub's own bug
 bounty as though it were a vulnerability in GitHub.
 
 Maintainers should enable
@@ -21,7 +21,7 @@ Maintainers should enable
 and verify the form before updating this policy. No response deadline,
 supported-version guarantee, or vulnerability reward program is promised.
 
-When a private route is available, include the affected Horus version or commit,
+When a private route is available, include the affected XComb version or commit,
 Android version and device model, affected component, reproduction steps,
 impact, and a minimal sanitized proof of concept. Do not include secrets or
 personal information; arrange any necessary sensitive evidence privately.

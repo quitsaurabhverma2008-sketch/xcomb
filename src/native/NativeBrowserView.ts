@@ -19,4 +19,4 @@ export type NativeBrowserViewProps = ViewProps & Readonly<{
 }>;
 
 /** Android WebView for previewing dev servers beside the terminal. */
-export const NativeBrowserView = requireNativeComponent<NativeBrowserViewProps>('HorusBrowserView');
+export const NativeBrowserView = requireNativeComponent<NativeBrowserViewProps>('XCombBrowserView');

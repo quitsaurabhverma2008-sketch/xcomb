@@ -20,7 +20,7 @@ function run(command, args) {
 const sha256 = bytes => createHash('sha256').update(bytes).digest('hex');
 run('unzip', ['-t', apk]);
 const badging = run(path.join(buildTools, 'aapt'), ['dump', 'badging', apk]).toString();
-assert.ok(badging.includes(`package: name='com.scariflabs.horus' versionCode='${versionCode}' versionName='${versionName}'`), 'APK identity/version differs from source');
+assert.ok(badging.includes(`package: name='com.scariflabs.xcomb' versionCode='${versionCode}' versionName='${versionName}'`), 'APK identity/version differs from source');
 assert.match(badging, /^native-code: 'arm64-v8a'\s*$/m, 'APK must contain only ARM64 native code');
 assert.doesNotMatch(badging, /^application-debuggable/m, 'Release APK must not be debuggable');
 const entries = run('unzip', ['-Z1', apk]).toString().trim().split('\n');
@@ -32,7 +32,7 @@ assert.match(signature.stderr, /DOES NOT VERIFY|Missing META-INF\/MANIFEST.MF|No
 const manifest = JSON.parse(run('unzip', ['-p', apk, 'assets/alpine-runtime/manifest.json']).toString());
 assert.equal(manifest.target.abi, 'arm64-v8a');
 assert.deepEqual(manifest.target.artifacts.map(artifact => artifact.jniName).sort(), ['libproot.so', 'libproot_loader.so']);
-for (const name of ['libproot.so', 'libproot_loader.so', 'libhorus_pty.so']) {
+for (const name of ['libproot.so', 'libproot_loader.so', 'libxcomb_pty.so']) {
   const bytes = run('unzip', ['-p', apk, `lib/arm64-v8a/${name}`]);
   assert.equal(bytes.subarray(0, 4).toString('hex'), '7f454c46', `${name} is not ELF`);
   assert.equal(bytes[4], 2, `${name} is not ELF64`);
@@ -47,7 +47,7 @@ for (const name of ['libproot.so', 'libproot_loader.so', 'libhorus_pty.so']) {
 const metadata = {
   commit: run('git', ['rev-parse', 'HEAD']).toString().trim(),
   runUrl: process.env.GITHUB_RUN_ID ? `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}` : null,
-  applicationId: 'com.scariflabs.horus', versionName, versionCode,
+  applicationId: 'com.scariflabs.xcomb', versionName, versionCode,
   abi: 'arm64-v8a', signed: false, sha256: sha256(fs.readFileSync(apk)),
   node: process.version, runtime: manifest,
 };

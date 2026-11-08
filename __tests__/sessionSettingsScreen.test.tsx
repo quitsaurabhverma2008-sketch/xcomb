@@ -57,7 +57,7 @@ describe('SessionSettingsScreen', () => {
     await ReactTestRenderer.act(async () => {
       renderer?.root.findByProps({testID: 'settings-docs'}).props.onPress();
     });
-    expect(openUrl).toHaveBeenCalledWith('https://www.scariflabs.com/horus/docs');
+    expect(openUrl).toHaveBeenCalledWith('https://github.com/quitsaurabhverma2008-sketch/xcomb#readme');
     await ReactTestRenderer.act(async () => { renderer?.unmount(); });
   });
 });

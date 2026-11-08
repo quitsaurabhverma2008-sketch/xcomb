@@ -36,4 +36,4 @@ export type NativeTerminalCanvasProps = ViewProps & Readonly<{
 }>;
 
 /** Android's one-view Canvas terminal surface. */
-export const NativeTerminalCanvas = requireNativeComponent<NativeTerminalCanvasProps>('HorusTerminalCanvas');
+export const NativeTerminalCanvas = requireNativeComponent<NativeTerminalCanvasProps>('XCombTerminalCanvas');

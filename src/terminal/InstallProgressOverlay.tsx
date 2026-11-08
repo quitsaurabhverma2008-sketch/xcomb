@@ -7,7 +7,7 @@ import {uiColors} from './palette';
 import {toolchainInstallLabel} from './toolchainLabels';
 
 /**
- * The provisioning script prints `HORUS_INSTALL_STAGE=<stage>` as it goes
+ * The provisioning script prints `XCOMB_INSTALL_STAGE=<stage>` as it goes
  * (see ProotSessionLauncher's TOOLCHAIN_PROVISION_SCRIPT). This maps those
  * stages onto four user-facing steps.
  */
@@ -19,7 +19,7 @@ export function installStepForStage(stage: string, toolchain: TerminalToolchainT
   return 2;
 }
 
-const STAGE_PATTERN = /HORUS_INSTALL_STAGE=([a-z_]+)/g;
+const STAGE_PATTERN = /XCOMB_INSTALL_STAGE=([a-z_]+)/g;
 
 /** The last install stage named in [text], if any. */
 export function lastInstallStage(text: string): string | undefined {

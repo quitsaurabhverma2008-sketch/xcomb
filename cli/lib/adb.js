@@ -2,10 +2,10 @@
 
 const {execFile} = require('node:child_process');
 
-const DEFAULT_APP_ID = 'com.scariflabs.horus';
+const DEFAULT_APP_ID = 'com.scariflabs.xcomb';
 
 function appId() {
-  return process.env.HORUS_APP_ID || DEFAULT_APP_ID;
+  return process.env.XCOMB_APP_ID || DEFAULT_APP_ID;
 }
 
 function adbPath() {
@@ -51,13 +51,13 @@ async function listDevices() {
 
 /**
  * The phone answers `content call` with `Result: Bundle[{json={...}}]`.
- * Everything Horus returns lives in that one JSON string.
+ * Everything XComb returns lives in that one JSON string.
  */
 function parseContentResult(output) {
   const match = /Result: Bundle\[\{json=(\{.*\})\}\]\s*$/s.exec(output.trim());
   if (!match) {
     if (/Unknown authority|Could not find provider|Error while accessing provider/i.test(output)) {
-      const error = new Error('Horus is not installed on this phone, or it is too old for remote access.');
+      const error = new Error('XComb is not installed on this phone, or it is too old for remote access.');
       error.code = 'not_installed';
       throw error;
     }
@@ -67,8 +67,8 @@ function parseContentResult(output) {
   return JSON.parse(match[1]);
 }
 
-/** Calls the Horus provider. The request travels as one base64 JSON argument. */
-async function callHorus(serial, method, request = {}) {
+/** Calls the XComb provider. The request travels as one base64 JSON argument. */
+async function callXComb(serial, method, request = {}) {
   const arg = Buffer.from(JSON.stringify(request), 'utf8').toString('base64');
   const command = ['shell', 'content', 'call', '--uri', `content://${appId()}.remote`, '--method', method, '--arg', arg];
   let output;
@@ -115,7 +115,7 @@ async function openApp(serial) {
 module.exports = {
   adb,
   appId,
-  callHorus,
+  callXComb,
   ensureForward,
   forward,
   listDevices,

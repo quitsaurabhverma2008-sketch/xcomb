@@ -460,7 +460,7 @@ index 9bd8dad..abd513d 100644
  	if ((int) result != -EPERM && (int) result != -EACCES)
  		return 0;
  
-+	/* Horus: every guest file really belongs to the app, so the kernel's
++	/* XComb: every guest file really belongs to the app, so the kernel's
 +	 * owner checks pass and EACCES from chown/chmod is in practice
 +	 * Android's SELinux policy (e.g. on /dev/pts entries, which sshd must
 +	 * chown for each login). Report success for any guest user, as for
@@ -542,7 +542,7 @@ diff --git a/src/extension/link2symlink/link2symlink.c b/src/extension/link2syml
  		if (!S_ISLNK(statl.st_mode))
  			return 0;
  
-+		/* Horus: a faked hard link whose intermediate or final file is
++		/* XComb: a faked hard link whose intermediate or final file is
 +		 * gone (e.g. `rm -rf` reached the .l2s entries first) is left
 +		 * as the plain symlink it is, so it can still be stat'ed and
 +		 * removed; failing here made it undeletable with EPERM.  */

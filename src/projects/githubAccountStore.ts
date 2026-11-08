@@ -11,7 +11,7 @@ const GITHUB_USERNAME_PATTERN = /^[A-Za-z0-9][A-Za-z0-9-]{0,38}$/;
 const GITHUB_AVATAR_PATH_PATTERN = /^https:\/\/avatars\.githubusercontent\.com\/[A-Za-z0-9._~!$'()*+,;=:@%/-]{1,256}$/;
 
 function nativeGithubAccountModule(): NativeGithubAccountModule | null {
-  const module = NativeModules.HorusDevice as NativeGithubAccountModule | undefined;
+  const module = NativeModules.XCombDevice as NativeGithubAccountModule | undefined;
   return module === undefined ? null : module;
 }
 

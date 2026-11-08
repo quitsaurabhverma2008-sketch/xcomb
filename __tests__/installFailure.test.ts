@@ -14,9 +14,9 @@ describe('installFailure', () => {
   });
 
   test('cleans escapes, markers, redraws, and repeated progress from the log', () => {
-    const raw = '\u001b[32mHORUS_INSTALL_STAGE=codex\u001b[0m\r\nDownloading Codex… 10%\nDownloading Codex… 20%\nhalf\rwhole\nnpm error boom\n';
+    const raw = '\u001b[32mXCOMB_INSTALL_STAGE=codex\u001b[0m\r\nDownloading Codex… 10%\nDownloading Codex… 20%\nhalf\rwhole\nnpm error boom\n';
     expect(cleanInstallLog(raw)).toBe('Downloading Codex… 20%\nwhole\nnpm error boom');
-    expect(cleanInstallLog('HORUS_INSTALL_STAGE=start\n')).toBeUndefined();
+    expect(cleanInstallLog('XCOMB_INSTALL_STAGE=start\n')).toBeUndefined();
   });
 
   test('points to mirrors only for downloads that can use one', () => {

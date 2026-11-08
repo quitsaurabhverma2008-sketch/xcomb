@@ -167,7 +167,7 @@ function exitFromSnapshot(sessionId: string, snapshot: Extract<TrustedSessionSna
 }
 
 function hasToolchainReadyMarker(value: string): boolean {
-  return /(?:^|[\r\n])HORUS_TOOLCHAIN_READY(?:[\r\n]|$)/.test(value);
+  return /(?:^|[\r\n])XCOMB_TOOLCHAIN_READY(?:[\r\n]|$)/.test(value);
 }
 
 function hasExactOutputLine(value: string, expected: string): boolean {
@@ -297,7 +297,7 @@ export function TerminalScreen({client: providedClient, runtime = undefined, onB
   const [keyboardHideRequest, setKeyboardHideRequest] = React.useState(0);
   const [keyboardLineResetRequest, setKeyboardLineResetRequest] = React.useState(0);
   const [harnessFrameReady, setHarnessFrameReady] = React.useState(false);
-  // Last HORUS_INSTALL_STAGE seen while first-run provisioning runs; undefined
+  // Last XCOMB_INSTALL_STAGE seen while first-run provisioning runs; undefined
   // when the app was already installed.
   const [installStage, setInstallStage] = React.useState<string | undefined>(undefined);
   const installStageRef = React.useRef<string | undefined>(undefined);
@@ -333,7 +333,7 @@ export function TerminalScreen({client: providedClient, runtime = undefined, onB
   const openedGithubLoginUrlsRef = React.useRef<Set<string>>(new Set());
   const installOutputTailRef = React.useRef('');
   const installReadyRef = React.useRef(false);
-  // Whether HORUS_TOOLCHAIN_READY was actually seen. installReadyRef is also
+  // Whether XCOMB_TOOLCHAIN_READY was actually seen. installReadyRef is also
   // assumed true for a resumed session; this one drives the install screen,
   // so a session left mid-install still shows its progress on return.
   const readyMarkerSeenRef = React.useRef(false);
@@ -411,7 +411,7 @@ export function TerminalScreen({client: providedClient, runtime = undefined, onB
     const rawLog = installLogRef.current;
     const stage = installStageRef.current;
     const log = cleanInstallLog(rawLog);
-    const commandExit = Array.from(rawLog.matchAll(/^HORUS_INSTALL_COMMAND_EXIT=(\d{1,3})\r?$/gm)).pop()?.[1];
+    const commandExit = Array.from(rawLog.matchAll(/^XCOMB_INSTALL_COMMAND_EXIT=(\d{1,3})\r?$/gm)).pop()?.[1];
     const commandExitCode = safeExitCode(Number(commandExit));
     const exitCode = safeExitCode(exit?.exitCode);
     setInstallFailure({

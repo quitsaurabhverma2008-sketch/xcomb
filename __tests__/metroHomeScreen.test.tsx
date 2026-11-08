@@ -99,7 +99,7 @@ describe('MetroHomeScreen', () => {
           accountIntro={{onOpen, onDismiss}}
           onOpen={() => undefined}
           onOpenGithubLogin={() => undefined}
-          user={{distro: 'alpine', username: 'horus', avatar: 'falcon'}}
+          user={{distro: 'alpine', username: 'xcomb', avatar: 'falcon'}}
         />,
       );
       await Promise.resolve();
@@ -114,12 +114,12 @@ describe('MetroHomeScreen', () => {
     expect(onDismiss).toHaveBeenCalledTimes(1);
 
     await ReactTestRenderer.act(async () => {
-      renderer.update(<MetroHomeScreen accountIntro={{onOpen, onDismiss, addableDistro: 'debian'}} onOpen={() => undefined} onOpenGithubLogin={() => undefined} user={{distro: 'alpine', username: 'horus', avatar: 'falcon'}} />);
+      renderer.update(<MetroHomeScreen accountIntro={{onOpen, onDismiss, addableDistro: 'debian'}} onOpen={() => undefined} onOpenGithubLogin={() => undefined} user={{distro: 'alpine', username: 'xcomb', avatar: 'falcon'}} />);
     });
     expect(find('metro-account-intro-add')[0].props.children).toContain('create a Debian account');
 
     await ReactTestRenderer.act(async () => {
-      renderer.update(<MetroHomeScreen onOpen={() => undefined} onOpenGithubLogin={() => undefined} user={{distro: 'alpine', username: 'horus', avatar: 'falcon'}} />);
+      renderer.update(<MetroHomeScreen onOpen={() => undefined} onOpenGithubLogin={() => undefined} user={{distro: 'alpine', username: 'xcomb', avatar: 'falcon'}} />);
     });
     expect(find('metro-account-intro')).toHaveLength(0);
     await ReactTestRenderer.act(async () => {

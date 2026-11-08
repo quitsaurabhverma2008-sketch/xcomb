@@ -10,7 +10,7 @@
  *      and the pinned xterm renderer packages.
  *   2. The spec src/native/NativeTerminalRuntime.ts may import only
  *      react-native.
- *   3. Kotlin under com/scariflabs/horus/terminal/ (main, unit, and connected
+ *   3. Kotlin under com/scariflabs/xcomb/terminal/ (main, unit, and connected
  *      sources) must remain within the terminal package, and its main sources
  *      may import only react-bridge, spec, Android, and JDK packages.
  *
@@ -25,9 +25,9 @@ const root = path.resolve(__dirname, '..');
 const terminalJsDir = path.join(root, 'src', 'terminal');
 const nativeSpecFile = path.join(root, 'src', 'native', 'NativeTerminalRuntime.ts');
 const terminalKotlinDirs = [
-  path.join(root, 'android', 'app', 'src', 'main', 'java', 'com', 'horus', 'terminal'),
-  path.join(root, 'android', 'app', 'src', 'test', 'java', 'com', 'horus', 'terminal'),
-  path.join(root, 'android', 'app', 'src', 'androidTest', 'java', 'com', 'horus', 'terminal'),
+  path.join(root, 'android', 'app', 'src', 'main', 'java', 'com', 'xcomb', 'terminal'),
+  path.join(root, 'android', 'app', 'src', 'test', 'java', 'com', 'xcomb', 'terminal'),
+  path.join(root, 'android', 'app', 'src', 'androidTest', 'java', 'com', 'xcomb', 'terminal'),
 ];
 const output = path.join(root, 'artifacts', 'alpine-poc', 'p0-boundary-scan.json');
 
@@ -49,9 +49,9 @@ const TERMINAL_JS_ADAPTER_FILES = new Set([
 ]);
 
 const KOTLIN_MAIN_IMPORT_ALLOWLIST = [
-  /^com\.horus\.terminal\./,
-  /^com\.horus\.R$/,
-  /^com\.horus\.specs\./,
+  /^com\.xcomb\.terminal\./,
+  /^com\.xcomb\.R$/,
+  /^com\.xcomb\.specs\./,
   /^com\.facebook\.react\./,
   /^android\.*/,
   /^androidx\.test\./,
@@ -261,7 +261,7 @@ function checkKotlinBoundary() {
   const files = terminalKotlinDirs.flatMap(dir =>
     listFiles(dir, ['.kt']).map(file => ({
       file,
-      isMain: dir.endsWith(path.join('main', 'java', 'com', 'horus', 'terminal')),
+      isMain: dir.endsWith(path.join('main', 'java', 'com', 'xcomb', 'terminal')),
     })),
   );
   for (const {file, isMain} of files) {

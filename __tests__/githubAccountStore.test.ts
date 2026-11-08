@@ -7,7 +7,7 @@ type GithubModuleMock = {
   clearGithubAccount: jest.Mock;
 };
 
-const nativeModules = NativeModules as unknown as {HorusDevice?: GithubModuleMock};
+const nativeModules = NativeModules as unknown as {XCombDevice?: GithubModuleMock};
 const githubModule: GithubModuleMock = {
   getGithubAccount: jest.fn(),
   saveGithubAccount: jest.fn(),
@@ -16,7 +16,7 @@ const githubModule: GithubModuleMock = {
 
 describe('GitHub account persistence', () => {
   beforeEach(() => {
-    nativeModules.HorusDevice = githubModule;
+    nativeModules.XCombDevice = githubModule;
     githubModule.getGithubAccount.mockReset();
     githubModule.saveGithubAccount.mockReset();
     githubModule.clearGithubAccount.mockReset();

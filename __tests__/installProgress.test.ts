@@ -14,12 +14,12 @@ describe('install progress stages', () => {
 
   test('reads the last stage marker in a chunk', () => {
     expect(lastInstallStage('(1/7) Installing ada-libs\n')).toBeUndefined();
-    expect(lastInstallStage('HORUS_INSTALL_STAGE=start\nHORUS_INSTALL_STAGE=apk\n')).toBe('apk');
-    expect(lastInstallStage('noise HORUS_INSTALL_STAGE=opencode_failed\n')).toBe('opencode_failed');
+    expect(lastInstallStage('XCOMB_INSTALL_STAGE=start\nXCOMB_INSTALL_STAGE=apk\n')).toBe('apk');
+    expect(lastInstallStage('noise XCOMB_INSTALL_STAGE=opencode_failed\n')).toBe('opencode_failed');
   });
 
   test('reads the latest download or package progress in a chunk', () => {
-    expect(lastDownloadProgress('HORUS_INSTALL_STAGE=claude\n')).toBeUndefined();
+    expect(lastDownloadProgress('XCOMB_INSTALL_STAGE=claude\n')).toBeUndefined();
     expect(lastDownloadProgress('Downloading Claude Code… 12 MB\nDownloading Claude Code… 84 MB\n')).toBe('84 MB downloaded');
     expect(lastDownloadProgress('Downloading OpenCode… 7 MB\r\n')).toBe('7 MB downloaded');
     expect(lastDownloadProgress('Downloading Codex… 4% (6 of 148 MB)\nDownloading Codex… 37% (55 of 148 MB)\n')).toBe('37% downloaded');

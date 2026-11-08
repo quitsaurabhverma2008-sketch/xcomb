@@ -78,7 +78,7 @@ static void test_bind_connect(const char *host)
 
 int main(void)
 {
-  char directory[] = "/tmp/horus-socket-XXXXXX";
+  char directory[] = "/tmp/xcomb-socket-XXXXXX";
   assert(mkdtemp(directory) != NULL);
   char host[PATH_MAX];
   snprintf(host, sizeof(host), "%s/12264.sock", directory);
@@ -90,7 +90,7 @@ int main(void)
   char long_path[PATH_MAX];
   memset(long_path, 'x', 200); long_path[200] = '\0';
   host_path_fixture = long_path;
-  temp_path_fixture = "/tmp/horus-short-XXXXXX";
+  temp_path_fixture = "/tmp/xcomb-short-XXXXXX";
   int length = translate_socketcall_enter(&tracee, &address, sizeof(guest));
   assert(length > 0 && length <= (int)sizeof(guest));
   assert(strlen(((struct sockaddr_un *)address)->sun_path) < 108);

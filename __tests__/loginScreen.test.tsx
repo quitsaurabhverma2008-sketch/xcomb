@@ -3,7 +3,7 @@ import ReactTestRenderer from 'react-test-renderer';
 import type {ProfileUser} from '../src/profile/profileStore';
 import {LoginScreen} from '../src/ui/LoginScreen';
 
-const ALPINE_USER: ProfileUser = {distro: 'alpine', username: 'horus', avatar: 'falcon'};
+const ALPINE_USER: ProfileUser = {distro: 'alpine', username: 'xcomb', avatar: 'falcon'};
 const DEBIAN_USER: ProfileUser = {distro: 'debian', username: 'deb', avatar: 'scarab'};
 
 async function render(users: readonly ProfileUser[]) {
@@ -39,7 +39,7 @@ describe('LoginScreen', () => {
     expect(has('login-back')).toBe(false);
 
     await press('login-submit');
-    expect(renderer.root.findByProps({testID: 'login-validation-error'}).props.children).toBe('Enter horus’s password to unlock XComb.');
+    expect(renderer.root.findByProps({testID: 'login-validation-error'}).props.children).toBe('Enter xcomb’s password to unlock XComb.');
 
     await type('correct horse');
     await press('login-submit');

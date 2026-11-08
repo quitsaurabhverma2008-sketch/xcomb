@@ -447,12 +447,7 @@ export type AcknowledgeSessionOutputResponse = {
   errorCode?: TerminalRuntimeErrorCode;
 };
 
-/**
- * Native code accepts `home`, `workspace`, or `agent:<key>` and validates the
- * value again before touching disk. Kept as a plain string for React Native
- * codegen, which cannot parse the template-literal form of this type.
- */
-export type GuestFileRootName = string;
+export type GuestFileRootName = 'home' | 'workspace' | `agent:${string}`;
 
 export type GuestFileErrorCode =
   | 'internal_error'

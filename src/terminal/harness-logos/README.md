@@ -1,6 +1,6 @@
 # Harness marks
 
-These launcher assets identify the external tools started by Horus. The
+These launcher assets identify the external tools started by XComb. The
 product names and marks remain the property of their respective owners.
 
 - `claude-code.svg` and `claude-code.png` use the Claude site favicon from

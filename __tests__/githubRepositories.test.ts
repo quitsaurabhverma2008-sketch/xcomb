@@ -48,38 +48,38 @@ describe('GitHub repository loading', () => {
     expect(command).toContain('affiliation=owner,collaborator,organization_member');
     expect(command).toContain('per_page=100');
     expect(command).toContain('.name, .full_name');
-    expect(command).toContain('HORUS_GITHUB_REPOS_BEGIN');
-    expect(command).toContain('HORUS_GITHUB_REPOS_END');
+    expect(command).toContain('XCOMB_GITHUB_REPOS_BEGIN');
+    expect(command).toContain('XCOMB_GITHUB_REPOS_END');
   });
 
   test('parses repository rows and ignores duplicate rows', () => {
     expect(parseGithubRepositoryListOutput([
       'noise before marker',
-      'HORUS_GITHUB_ACCOUNT_BEGIN',
+      'XCOMB_GITHUB_ACCOUNT_BEGIN',
       '0x1379\thttps://avatars.githubusercontent.com/u/123?v=4',
-      'HORUS_GITHUB_ACCOUNT_END|0',
-      'HORUS_GITHUB_REPOS_BEGIN',
-      'horus\t0x1379/horus',
-      'horus\t0x1379/horus',
-      'HORUS_GITHUB_REPOS_END|0',
+      'XCOMB_GITHUB_ACCOUNT_END|0',
+      'XCOMB_GITHUB_REPOS_BEGIN',
+      'xcomb\t0x1379/xcomb',
+      'xcomb\t0x1379/xcomb',
+      'XCOMB_GITHUB_REPOS_END|0',
     ].join('\n'))).toEqual({
       kind: 'success',
       account: {username: '0x1379', avatarUrl: 'https://avatars.githubusercontent.com/u/123'},
-      repositories: [{name: 'horus', path: '0x1379/horus', remote: 'https://github.com/0x1379/horus.git'}],
+      repositories: [{name: 'xcomb', path: '0x1379/xcomb', remote: 'https://github.com/0x1379/xcomb.git'}],
     });
   });
 
   test.each(['\u0007', '\u001b\\'])('preserves account and repository boundaries between OSC sequences ending in %j', terminator => {
     const terminalQuery = `\u001b]11;?${terminator}\u001b]10;?${terminator}`;
     expect(parseGithubRepositoryListOutput([
-      'HORUS_TOOLCHAIN_READY',
-      'HORUS_INSTALL_HANDOFF=horus',
-      'HORUS_GITHUB_ACCOUNT_BEGIN',
+      'XCOMB_TOOLCHAIN_READY',
+      'XCOMB_INSTALL_HANDOFF=xcomb',
+      'XCOMB_GITHUB_ACCOUNT_BEGIN',
       `${terminalQuery}user\thttps://avatars.githubusercontent.com/u/1`,
-      'HORUS_GITHUB_ACCOUNT_END|0',
-      'HORUS_GITHUB_REPOS_BEGIN',
+      'XCOMB_GITHUB_ACCOUNT_END|0',
+      'XCOMB_GITHUB_REPOS_BEGIN',
       `${terminalQuery}repo\towner/repo`,
-      'HORUS_GITHUB_REPOS_END|0',
+      'XCOMB_GITHUB_REPOS_END|0',
       '',
     ].join('\r\n'))).toEqual({
       kind: 'success',
@@ -90,11 +90,11 @@ describe('GitHub repository loading', () => {
 
   test('treats a successful empty repository marker block as an empty account repository list', () => {
     expect(parseGithubRepositoryListOutput([
-      'HORUS_GITHUB_ACCOUNT_BEGIN',
+      'XCOMB_GITHUB_ACCOUNT_BEGIN',
       'user\thttps://avatars.githubusercontent.com/u/1',
-      'HORUS_GITHUB_ACCOUNT_END|0',
-      'HORUS_GITHUB_REPOS_BEGIN',
-      'HORUS_GITHUB_REPOS_END|0',
+      'XCOMB_GITHUB_ACCOUNT_END|0',
+      'XCOMB_GITHUB_REPOS_BEGIN',
+      'XCOMB_GITHUB_REPOS_END|0',
     ].join('\n'))).toEqual({
       kind: 'success',
       account: {username: 'user', avatarUrl: 'https://avatars.githubusercontent.com/u/1'},
@@ -104,14 +104,14 @@ describe('GitHub repository loading', () => {
 
   test('accepts GitHub repository names that begin with allowed punctuation', () => {
     expect(parseGithubRepositoryListOutput([
-      'HORUS_GITHUB_ACCOUNT_BEGIN',
+      'XCOMB_GITHUB_ACCOUNT_BEGIN',
       'user\thttps://avatars.githubusercontent.com/u/1',
-      'HORUS_GITHUB_ACCOUNT_END|0',
-      'HORUS_GITHUB_REPOS_BEGIN',
+      'XCOMB_GITHUB_ACCOUNT_END|0',
+      'XCOMB_GITHUB_REPOS_BEGIN',
       '.github\towner/.github',
       '_config\towner/_config',
       '-notes\towner/-notes',
-      'HORUS_GITHUB_REPOS_END|0',
+      'XCOMB_GITHUB_REPOS_END|0',
     ].join('\n'))).toEqual({
       kind: 'success',
       account: {username: 'user', avatarUrl: 'https://avatars.githubusercontent.com/u/1'},
@@ -125,12 +125,12 @@ describe('GitHub repository loading', () => {
 
   test('rejects repository names that would escape the projects directory', () => {
     expect(parseGithubRepositoryListOutput([
-      'HORUS_GITHUB_ACCOUNT_BEGIN',
+      'XCOMB_GITHUB_ACCOUNT_BEGIN',
       'user\thttps://avatars.githubusercontent.com/u/1',
-      'HORUS_GITHUB_ACCOUNT_END|0',
-      'HORUS_GITHUB_REPOS_BEGIN',
+      'XCOMB_GITHUB_ACCOUNT_END|0',
+      'XCOMB_GITHUB_REPOS_BEGIN',
       '..\towner/..',
-      'HORUS_GITHUB_REPOS_END|0',
+      'XCOMB_GITHUB_REPOS_END|0',
     ].join('\n'))).toEqual({
       kind: 'error',
       account: {username: 'user', avatarUrl: 'https://avatars.githubusercontent.com/u/1'},
@@ -140,8 +140,8 @@ describe('GitHub repository loading', () => {
   });
 
   test('rejects malformed rows and non-zero gh exits', () => {
-    expect(parseGithubRepositoryListOutput('HORUS_GITHUB_ACCOUNT_BEGIN\nuser\thttps://avatars.githubusercontent.com/u/1\nHORUS_GITHUB_ACCOUNT_END|0\nHORUS_GITHUB_REPOS_BEGIN\nnot-a-row\nHORUS_GITHUB_REPOS_END|0\n')).toEqual({kind: 'error', account: {username: 'user', avatarUrl: 'https://avatars.githubusercontent.com/u/1'}, errorCode: 'invalid_output', outputIssue: 'repository_row_invalid'});
-    expect(parseGithubRepositoryListOutput('HORUS_GITHUB_ACCOUNT_BEGIN\nuser\thttps://avatars.githubusercontent.com/u/1\nHORUS_GITHUB_ACCOUNT_END|0\nHORUS_GITHUB_REPOS_BEGIN\nHORUS_GITHUB_REPOS_END|4\n')).toEqual({kind: 'error', account: {username: 'user', avatarUrl: 'https://avatars.githubusercontent.com/u/1'}, errorCode: 'command_failed', exitCode: 4});
+    expect(parseGithubRepositoryListOutput('XCOMB_GITHUB_ACCOUNT_BEGIN\nuser\thttps://avatars.githubusercontent.com/u/1\nXCOMB_GITHUB_ACCOUNT_END|0\nXCOMB_GITHUB_REPOS_BEGIN\nnot-a-row\nXCOMB_GITHUB_REPOS_END|0\n')).toEqual({kind: 'error', account: {username: 'user', avatarUrl: 'https://avatars.githubusercontent.com/u/1'}, errorCode: 'invalid_output', outputIssue: 'repository_row_invalid'});
+    expect(parseGithubRepositoryListOutput('XCOMB_GITHUB_ACCOUNT_BEGIN\nuser\thttps://avatars.githubusercontent.com/u/1\nXCOMB_GITHUB_ACCOUNT_END|0\nXCOMB_GITHUB_REPOS_BEGIN\nXCOMB_GITHUB_REPOS_END|4\n')).toEqual({kind: 'error', account: {username: 'user', avatarUrl: 'https://avatars.githubusercontent.com/u/1'}, errorCode: 'command_failed', exitCode: 4});
   });
 
   test('runs the query through the session contract and cleans up after exit', async () => {
@@ -159,13 +159,13 @@ describe('GitHub repository loading', () => {
     for (let index = 0; index < 8; index += 1) await Promise.resolve();
     expect((runtime.spec.startSession as unknown as jest.Mock)).toHaveBeenCalled();
     expect((runtime.spec.startSession as unknown as jest.Mock)).toHaveBeenCalledWith(expect.objectContaining({toolchain: 'github'}));
-    runtime.emit(outputEvent('s-1-1', 1, 'HORUS_TOOLCHAIN_READY\r\nHORUS_INSTALL_HANDOFF=horus\r\nHORUS_GITHUB_ACCOUNT_BEGIN\r\n\u001b]11;?\u001b'));
+    runtime.emit(outputEvent('s-1-1', 1, 'XCOMB_TOOLCHAIN_READY\r\nXCOMB_INSTALL_HANDOFF=xcomb\r\nXCOMB_GITHUB_ACCOUNT_BEGIN\r\n\u001b]11;?\u001b'));
     expect(onAccount).not.toHaveBeenCalled();
-    runtime.emit(outputEvent('s-1-1', 2, '\\user\thttps://avatars.githubusercontent.com/u/1\r\nHORUS_GITHUB_ACCOUNT_END|0\r\n'));
+    runtime.emit(outputEvent('s-1-1', 2, '\\user\thttps://avatars.githubusercontent.com/u/1\r\nXCOMB_GITHUB_ACCOUNT_END|0\r\n'));
     expect(onAccount).toHaveBeenCalledTimes(1);
     expect(onAccount).toHaveBeenCalledWith({username: 'user', avatarUrl: 'https://avatars.githubusercontent.com/u/1'});
-    runtime.emit(outputEvent('s-1-1', 3, 'HORUS_GITHUB_REPOS_BEGIN\r\n\u001b]11;?\u001b'));
-    runtime.emit(outputEvent('s-1-1', 4, '\\repo\towner/repo\r\nHORUS_GITHUB_REPOS_END|0\r\n'));
+    runtime.emit(outputEvent('s-1-1', 3, 'XCOMB_GITHUB_REPOS_BEGIN\r\n\u001b]11;?\u001b'));
+    runtime.emit(outputEvent('s-1-1', 4, '\\repo\towner/repo\r\nXCOMB_GITHUB_REPOS_END|0\r\n'));
     runtime.emit({type: 'exit', sessionId: 's-1-1', reason: 'exited', exitCode: 0});
     await expect(resultPromise).resolves.toEqual({
       kind: 'success',
@@ -189,7 +189,7 @@ describe('GitHub repository loading', () => {
     });
     const resultPromise = listGithubRepositories(client);
     for (let index = 0; index < 8; index += 1) await Promise.resolve();
-    runtime.emit(outputEvent('s-1-1', 1, 'HORUS_GITHUB_ACCOUNT_BEGIN\nuser\thttps://avatars.githubusercontent.com/u/1\nHORUS_GITHUB_ACCOUNT_END|0\n'));
+    runtime.emit(outputEvent('s-1-1', 1, 'XCOMB_GITHUB_ACCOUNT_BEGIN\nuser\thttps://avatars.githubusercontent.com/u/1\nXCOMB_GITHUB_ACCOUNT_END|0\n'));
     await jest.advanceTimersByTimeAsync(GITHUB_REPO_LIST_TIMEOUT_MS);
     await expect(resultPromise).resolves.toEqual({kind: 'error', account: {username: 'user', avatarUrl: 'https://avatars.githubusercontent.com/u/1'}, errorCode: 'timeout'});
     expect(runtime.stopCalls).toEqual(['s-1-1']);

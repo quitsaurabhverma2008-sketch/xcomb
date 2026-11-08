@@ -41,7 +41,7 @@ function isDeviceSnapshot(value: unknown): value is DeviceSnapshot {
 }
 
 export async function readDeviceSnapshot(): Promise<DeviceSnapshot | null> {
-  const module = NativeModules.HorusDevice as NativeDeviceModule | undefined;
+  const module = NativeModules.XCombDevice as NativeDeviceModule | undefined;
   if (module === undefined) return null;
   try {
     const response = await module.getDeviceSnapshot();

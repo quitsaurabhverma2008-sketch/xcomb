@@ -48,7 +48,7 @@ export function cleanInstallLog(raw: string): string | undefined {
     .split('\n')
     // A carriage return redraws its line; keep what was drawn last.
     .map(line => (line.split('\r').filter(part => part.length > 0).pop() ?? '').trimEnd())
-    .filter(line => line.length > 0 && !line.startsWith('HORUS_'));
+    .filter(line => line.length > 0 && !line.startsWith('XCOMB_'));
   // Progress lines repeat; only the last one says how far it got.
   const kept = lines.filter((line, index) => !PROGRESS_LINE.test(line) || !lines.slice(index + 1).some(next => PROGRESS_LINE.test(next)));
   const tail = kept.slice(-SHOWN_LOG_LINES).join('\n').trim();

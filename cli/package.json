@@ -1,11 +1,11 @@
 {
-  "name": "horus-cli",
+  "name": "xcomb-cli",
   "version": "1.0.0",
-  "description": "Use Android phones running Horus like small Linux machines over USB: pair, ssh, exec on many phones, copy, and forward ports.",
+  "description": "Use Android phones running XComb like small Linux machines over USB: pair, ssh, exec on many phones, copy, and forward ports.",
   "license": "MIT",
-  "homepage": "https://github.com/scarif-labs/horus/tree/main/cli#readme",
+  "homepage": "https://github.com/quitsaurabhverma2008-sketch/xcomb/tree/main/cli#readme",
   "bugs": {
-    "url": "https://github.com/scarif-labs/horus/issues"
+    "url": "https://github.com/quitsaurabhverma2008-sketch/xcomb/issues"
   },
   "keywords": [
     "android",
@@ -18,7 +18,7 @@
     "codex"
   ],
   "bin": {
-    "horus": "bin/horus.js"
+    "xcomb": "bin/xcomb.js"
   },
   "files": [
     "bin",
@@ -31,7 +31,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/scarif-labs/horus.git",
+    "url": "git+https://github.com/quitsaurabhverma2008-sketch/xcomb.git",
     "directory": "cli"
   }
 }

@@ -31,7 +31,7 @@ export type RemoteAccessModule = Readonly<{
 const STATES: readonly RemoteAccessState[] = ['stopped', 'starting', 'installing', 'running', 'failed'];
 
 function nativeRemoteAccessModule(): RemoteAccessModule | null {
-  const module = NativeModules.HorusDevice as Partial<RemoteAccessModule> | undefined;
+  const module = NativeModules.XCombDevice as Partial<RemoteAccessModule> | undefined;
   if (
     module === undefined ||
     typeof module.getRemoteAccess !== 'function' ||

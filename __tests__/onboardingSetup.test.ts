@@ -10,7 +10,7 @@ jest.mock('../src/profile/profileStore', () => ({
   saveUserProfile: jest.fn(),
 }));
 
-const USER = {distro: 'alpine', username: 'horus', avatar: 'falcon', password: 'test-password'} as const;
+const USER = {distro: 'alpine', username: 'xcomb', avatar: 'falcon', password: 'test-password'} as const;
 
 describe('setupOnboardingProfile', () => {
   const provision = jest.mocked(provisionAlpineToolchain);
