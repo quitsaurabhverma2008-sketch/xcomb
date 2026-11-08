@@ -1,6 +1,6 @@
 {
-  "name": "horus",
-  "version": "1.1.4",
+  "name": "xcomb",
+  "version": "1.1.5",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -23,11 +23,11 @@
     "environment:validate": "node scripts/validate-environment-report.js"
   },
   "codegenConfig": {
-    "name": "HorusSpec",
+    "name": "XCombSpec",
     "type": "modules",
     "jsSrcsDir": "src/native",
     "android": {
-      "javaPackageName": "com.scariflabs.horus.specs"
+      "javaPackageName": "com.scariflabs.xcomb.specs"
     }
   },
   "dependencies": {

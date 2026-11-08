@@ -51,8 +51,8 @@ react {
     // hermesCommand = "$rootDir/my-custom-hermesc/bin/hermesc"
     // Lets source-only builds (F-Droid) use a hermesc compiled from source
     // instead of the prebuilt one in node_modules/hermes-compiler.
-    if (findProperty("horus.hermesCommand")) {
-        hermesCommand = findProperty("horus.hermesCommand")
+    if (findProperty("xcomb.hermesCommand")) {
+        hermesCommand = findProperty("xcomb.hermesCommand")
     }
     //
     //   The list of flags to pass to the Hermes compiler. By default is "-O", "-output-source-map"
@@ -88,7 +88,7 @@ def enableProguardInReleaseBuilds = true
  */
 // Hermes is the only configured runtime; keep the dormant JSC fallback reproducible.
 def jscFlavor = 'io.github.react-native-community:jsc-android:2026004'
-def forceKotlinUnitFailure = providers.gradleProperty("horus.forceKotlinUnitFailure").getOrElse("false")
+def forceKotlinUnitFailure = providers.gradleProperty("xcomb.forceKotlinUnitFailure").getOrElse("false")
 
 // Alpine terminal runtime (PRoot + loader), compiled from the pinned sources
 // under native/ by scripts/native/build-proot-runtime.sh with the pinned NDK.
@@ -140,7 +140,7 @@ tasks.register("generateAlpineRuntimeManifest") {
 // APK extraction rules keep the loadable .so in app-native storage. The PoC
 // is ARM64-only by decision, matching the packaged PRoot runtime.
 def ptyHelperSource = file("src/main/cpp/terminal_pty.c")
-def ptyHelperStagingDir = file("$buildDir/generated/horus-pty-jniLibs")
+def ptyHelperStagingDir = file("$buildDir/generated/xcomb-pty-jniLibs")
 
 def resolveNdkClang = {
     def prebuiltDir = new File(android.ndkDirectory, "toolchains/llvm/prebuilt")
@@ -152,9 +152,9 @@ def resolveNdkClang = {
     new File(clangDir, "bin/clang")
 }
 
-tasks.register("buildHorusPtyHelper", Exec) {
+tasks.register("buildXCombPtyHelper", Exec) {
     def ptyOutputDir = new File(ptyHelperStagingDir, "arm64-v8a")
-    def ptyOutput = new File(ptyOutputDir, "libhorus_pty.so")
+    def ptyOutput = new File(ptyOutputDir, "libxcomb_pty.so")
     inputs.file(ptyHelperSource)
     outputs.file(ptyOutput)
     doFirst {
@@ -189,8 +189,8 @@ def verifyAppCodegenArtifacts = tasks.register("verifyAppCodegenArtifacts") {
     doLast {
         def requiredFiles = [
                 new File(appCodegenJniDir, "CMakeLists.txt"),
-                new File(appCodegenJniDir, "HorusSpec-generated.cpp"),
-                new File(appCodegenJniDir, "HorusSpec.h"),
+                new File(appCodegenJniDir, "XCombSpec-generated.cpp"),
+                new File(appCodegenJniDir, "XCombSpec.h"),
         ]
         def missingFiles = requiredFiles.findAll { !it.isFile() }
         if (!missingFiles.isEmpty()) {
@@ -221,8 +221,8 @@ def invalidateStaleDebugCodegenCmake = tasks.register("invalidateStaleDebugCodeg
                 return false
             }
             def graphText = graph.getText("UTF-8")
-            !graphText.contains("HorusSpec-generated.cpp") ||
-                    !graphText.contains("REACT_NATIVE_APP_MODULE_PROVIDER=HorusSpec_ModuleProvider")
+            !graphText.contains("XCombSpec-generated.cpp") ||
+                    !graphText.contains("REACT_NATIVE_APP_MODULE_PROVIDER=XCombSpec_ModuleProvider")
         }
         if (!staleGraphs.isEmpty()) {
             delete(debugCxxDir)
@@ -249,11 +249,11 @@ tasks.configureEach { nativeTask ->
 // Ensure every APK variant that packages native libraries has built the
 // runtime and generated its digest manifest first.
 tasks.named("preBuild").configure {
-    dependsOn("generateAlpineRuntimeManifest", verifyAppCodegenArtifacts, "buildHorusPtyHelper")
+    dependsOn("generateAlpineRuntimeManifest", verifyAppCodegenArtifacts, "buildXCombPtyHelper")
 }
 
 tasks.withType(org.gradle.api.tasks.testing.Test).configureEach {
-    systemProperty("horus.forceKotlinUnitFailure", forceKotlinUnitFailure)
+    systemProperty("xcomb.forceKotlinUnitFailure", forceKotlinUnitFailure)
 }
 
 android {
@@ -261,13 +261,13 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "com.scariflabs.horus"
+    namespace "com.scariflabs.xcomb"
     defaultConfig {
-        applicationId "com.scariflabs.horus"
+        applicationId "com.scariflabs.xcomb"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 10
-        versionName "1.1.4"
+        versionCode 11
+        versionName "1.1.5"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     sourceSets {
@@ -284,14 +284,14 @@ android {
     }
     // Release builds are unsigned unless a keystore is supplied, e.g. in
     // ~/.gradle/gradle.properties. F-Droid builds and signs releases itself.
-    def releaseStoreFile = findProperty("horus.releaseStoreFile")
+    def releaseStoreFile = findProperty("xcomb.releaseStoreFile")
     signingConfigs {
         if (releaseStoreFile) {
             release {
                 storeFile file(releaseStoreFile)
-                storePassword findProperty("horus.releaseStorePassword")
-                keyAlias findProperty("horus.releaseKeyAlias")
-                keyPassword findProperty("horus.releaseKeyPassword")
+                storePassword findProperty("xcomb.releaseStorePassword")
+                keyAlias findProperty("xcomb.releaseKeyAlias")
+                keyPassword findProperty("xcomb.releaseKeyPassword")
             }
         }
     }

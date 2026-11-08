@@ -1,0 +1,10 @@
+- Full XComb rebrand: app name, native modules, environment variables, JNI and package ID (com.scariflabs.xcomb)
+- Phone storage for you and your agents: grant All files access, then /sdcard appears inside Linux
+- Full file manager: Phone storage, Linux home, Workspace and Favorites tabs, with search, sort and list view
+- File actions: open zip/jar/apk as archive, Compress (zip), Information, Copy, Cut, Delete, Rename, Share and Add to Favorites
+- Long-press multi-select, paste, create folders/files/archives, and Import from phone through the system picker
+- Edit text files in place from the file manager
+- Config page opens the file manager locked to each tool's folder
+- New package ID: this is a fresh install. The old app stays separate and its data is not migrated
+- Zip only; 7z and custom compression are not included. Android/data and Android/obb remain restricted
+- CI APKs use a throwaway signing key: uninstall the old build before installing this one
