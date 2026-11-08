@@ -15,4 +15,4 @@ export type NativeTerminalInputProps = ViewProps & Readonly<{
 }>;
 
 /** Android keyboard bridge that writes committed text directly to the PTY. */
-export const NativeTerminalInput = requireNativeComponent<NativeTerminalInputProps>('HorusTerminalInput');
+export const NativeTerminalInput = requireNativeComponent<NativeTerminalInputProps>('XCombTerminalInput');

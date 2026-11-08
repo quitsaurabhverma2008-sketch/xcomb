@@ -39,7 +39,7 @@ type NativeProfileModule = Readonly<{
 }>;
 
 function nativeProfileModule(): NativeProfileModule | null {
-  const module = NativeModules.HorusDevice as NativeProfileModule | undefined;
+  const module = NativeModules.XCombDevice as NativeProfileModule | undefined;
   return module === undefined ? null : module;
 }
 

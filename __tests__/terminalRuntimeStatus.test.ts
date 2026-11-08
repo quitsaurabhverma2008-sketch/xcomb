@@ -43,7 +43,7 @@ function successResponse(
     abi: 'arm64-v8a',
     apiLevel: 35,
     appVersion: '0.0.1',
-    storageRoot: '/data/user/0/com.scariflabs.horus/files/horus',
+    storageRoot: '/data/user/0/com.scariflabs.xcomb/files/xcomb',
     prootAvailable: true,
     prootVersion: '5.4.0',
     installedVersionIds: [],
@@ -190,7 +190,7 @@ describe('readTerminalRuntimeStatus', () => {
       abi: 'arm64-v8a',
       apiLevel: 35,
       appVersion: '0.0.1',
-      storageRoot: '/data/user/0/com.scariflabs.horus/files/horus',
+      storageRoot: '/data/user/0/com.scariflabs.xcomb/files/xcomb',
       prootAvailable: true,
       prootVersion: '5.4.0',
       installedVersionIds: [],
@@ -234,15 +234,15 @@ describe('readTerminalDebugLog', () => {
     await expect(readTerminalDebugLog({
       getDebugLog: async () => ({
         status: 'success' as const,
-        path: '/data/user/0/com.scariflabs.horus/files/horus/diagnostics/terminal-debug.log',
-        externalPath: '/sdcard/Android/data/com.scariflabs.horus/files/diagnostics/terminal-debug.log',
+        path: '/data/user/0/com.scariflabs.xcomb/files/xcomb/diagnostics/terminal-debug.log',
+        externalPath: '/sdcard/Android/data/com.scariflabs.xcomb/files/diagnostics/terminal-debug.log',
         bytes: 128,
         tail: 'event=client_request_timeout',
       }),
     })).resolves.toEqual({
       kind: 'success',
-      path: '/data/user/0/com.scariflabs.horus/files/horus/diagnostics/terminal-debug.log',
-      externalPath: '/sdcard/Android/data/com.scariflabs.horus/files/diagnostics/terminal-debug.log',
+      path: '/data/user/0/com.scariflabs.xcomb/files/xcomb/diagnostics/terminal-debug.log',
+      externalPath: '/sdcard/Android/data/com.scariflabs.xcomb/files/diagnostics/terminal-debug.log',
       bytes: 128,
       tail: 'event=client_request_timeout',
     });

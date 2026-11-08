@@ -18,7 +18,7 @@ import {
   type SessionSettingsResult,
 } from '../terminal/session/sessionSettings';
 
-export const HORUS_DOCS_URL = 'https://www.scariflabs.com/horus/docs';
+export const XCOMB_DOCS_URL = 'https://github.com/quitsaurabhverma2008-sketch/xcomb#readme';
 
 type SessionSettingsScreenProps = Readonly<{
   onBack: () => void;
@@ -139,10 +139,10 @@ export function SessionSettingsScreen({onBack, openUrl = url => Linking.openURL(
         <SettingsSection title="HELP">
           <SettingsRow
             accessibilityLabel="Open the XComb documentation in your browser"
-            detail="scariflabs.com/horus/docs"
+            detail="Online documentation"
             icon="book"
             label="Documentation"
-            onPress={() => { openUrl(HORUS_DOCS_URL).catch(() => undefined); }}
+            onPress={() => { openUrl(XCOMB_DOCS_URL).catch(() => undefined); }}
             right={<SettingsExternalMark />}
             testID="settings-docs"
           />

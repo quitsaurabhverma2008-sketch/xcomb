@@ -21,8 +21,7 @@ import {OnboardingScreen, type OnboardingActions, type RootfsSetupResult} from '
 import {AddUserScreen} from './src/ui/AddUserScreen';
 import {ProjectHubScreen} from './src/ui/ProjectHubScreen';
 import {LoginScreen} from './src/ui/LoginScreen';
-import {FileExplorerScreen} from './src/ui/FileExplorerScreen';
-import {ConfigEditorScreen} from './src/ui/ConfigEditorScreen';
+import {FileManagerScreen} from './src/ui/FileManagerScreen';
 import type {AgentConfig} from './src/files/agentConfigs';
 import {GithubAccountScreen} from './src/ui/GithubAccountScreen';
 import {SessionSettingsScreen} from './src/ui/SessionSettingsScreen';
@@ -38,9 +37,9 @@ import {createRequestIdFactory} from './src/terminal/requestIds';
 type AppRoute = 'boot' | 'onboarding' | 'login' | 'home' | 'settings' | 'user' | 'add-user' | 'github-account' | 'projects' | 'files' | 'config' | 'terminal';
 type BootState = 'checking' | 'installing' | 'error';
 
-const BOOT_REQUEST_ID = 'horus-bootstrap-1';
-const IMPORT_REQUEST_ID = 'horus-import-1';
-const ACTIVATE_REQUEST_ID = 'horus-activate-1';
+const BOOT_REQUEST_ID = 'xcomb-bootstrap-1';
+const IMPORT_REQUEST_ID = 'xcomb-import-1';
+const ACTIVATE_REQUEST_ID = 'xcomb-activate-1';
 
 /** The catalog rootfs id of a distribution; every distribution XComb offers has one. */
 function rootfsIdFor(distro: LinuxDistro): string {
@@ -403,7 +402,7 @@ function App(): React.JSX.Element {
       setRoute('home');
       return;
     }
-    const marker = `HORUS_GITHUB_LOGOUT_COMPLETE_${nextSessionRequestId('github-logout')}`;
+    const marker = `XCOMB_GITHUB_LOGOUT_COMPLETE_${nextSessionRequestId('github-logout')}`;
     setPendingCompletion({kind: 'github-logout', marker});
     setGithubAccountError(undefined);
     const command = `gh auth logout --hostname github.com --user ${shellQuote(githubAccount.username)} && ${printHiddenMarker(marker)}`;
@@ -433,7 +432,7 @@ function App(): React.JSX.Element {
     const directory = workspaceProjectDirectory(name);
     if (directory === undefined || selectedHarness === undefined) return;
     manualWorkspaceRefreshRef.current += 1;
-    const marker = `HORUS_PROJECT_CLONE_COMPLETE_${nextSessionRequestId('clone')}`;
+    const marker = `XCOMB_PROJECT_CLONE_COMPLETE_${nextSessionRequestId('clone')}`;
     const command = buildProjectCloneCommand(source, directory, marker, kind);
     setPendingCompletion({kind: 'clone', marker, name, directory, harness: selectedHarness});
     openTerminal({
@@ -525,7 +524,7 @@ function App(): React.JSX.Element {
   }, [autoRefresh, refreshGithubRepositories, refreshManualWorkspaces, route]);
 
   const openGithubLogin = React.useCallback((returnTo: 'home' | 'projects') => {
-    const marker = `HORUS_GITHUB_LOGIN_COMPLETE_${nextSessionRequestId('github-login')}`;
+    const marker = `XCOMB_GITHUB_LOGIN_COMPLETE_${nextSessionRequestId('github-login')}`;
     setPendingCompletion({kind: 'github-login', marker, returnTo});
     const command = `mkdir -p ${shellQuote(WORKSPACE_PROJECTS_DIRECTORY)} && cd ${shellQuote(WORKSPACE_PROJECTS_DIRECTORY)} && ${GITHUB_AUTH_LOGIN_COMMAND} && ${printHiddenMarker(marker)}`;
     openTarget({title: 'GitHub Login', eyebrow: 'GITHUB / LOGIN', command: buildZshCommand(command), toolchain: 'github', returnTo, completionMarker: marker});
@@ -726,10 +725,10 @@ function App(): React.JSX.Element {
     );
   }
   if (route === 'files') {
-    return <FileExplorerScreen onBack={() => setRoute('home')} />;
+    return <FileManagerScreen onBack={() => setRoute('home')} />;
   }
   if (route === 'config' && configAgent !== undefined) {
-    return <ConfigEditorScreen agent={configAgent} onBack={() => setRoute('home')} />;
+    return <FileManagerScreen initialRootId={`agent:${configAgent.key}`} lockRoot onBack={() => setRoute('home')} startCandidates={configAgent.startCandidates} title={configAgent.label} />;
   }
   const heldCompletion = terminalTarget.completionMarker !== undefined && pendingCompletion?.marker === terminalTarget.completionMarker ? pendingCompletion.kind : undefined;
   const clonePending = heldCompletion === 'clone';

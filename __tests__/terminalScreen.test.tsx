@@ -83,7 +83,7 @@ function runtimeStatus(overrides: Record<string, unknown> = {}): Record<string, 
     abi: 'arm64-v8a',
     apiLevel: 35,
     appVersion: '0.0.1',
-    storageRoot: '/data/user/0/com.scariflabs.horus/files/horus',
+    storageRoot: '/data/user/0/com.scariflabs.xcomb/files/xcomb',
     prootAvailable: true,
     prootVersion: '5.4.0',
     installedVersionIds: ['alpine-3.24.0-aarch64'],
@@ -294,7 +294,7 @@ describe('TerminalScreen', () => {
     expect(renderer.root.findAllByProps({testID: 'terminal-output-grid'})).toHaveLength(0);
 
     await ReactTestRenderer.act(async () => {
-      runtime.emit({type: 'output', sessionId: 's-1-1', seq: 1, base64: encodeTestBase64('HORUS_TOOLCHAIN_')});
+      runtime.emit({type: 'output', sessionId: 's-1-1', seq: 1, base64: encodeTestBase64('XCOMB_TOOLCHAIN_')});
       runtime.emit({type: 'output', sessionId: 's-1-1', seq: 2, base64: encodeTestBase64('READY\n')});
       await flushAsync();
     });
@@ -338,7 +338,7 @@ describe('TerminalScreen', () => {
   test('waits for the visible workspace command to exit before completing its handoff', async () => {
     const runtime = fakeRuntime();
     const onCompletion = jest.fn();
-    const marker = 'HORUS_PROJECT_CLONE_COMPLETE_launcher-clone-1';
+    const marker = 'XCOMB_PROJECT_CLONE_COMPLETE_launcher-clone-1';
     const client = new TerminalSessionClient(runtime.spec, handler => {
       runtime.listeners.push(handler);
       return () => { runtime.listeners.splice(runtime.listeners.indexOf(handler), 1); };
@@ -360,7 +360,7 @@ describe('TerminalScreen', () => {
     });
 
     await ReactTestRenderer.act(async () => {
-      runtime.emit({type: 'output', sessionId: 's-1-1', seq: 1, base64: encodeTestBase64('HORUS_TOOLCHAIN_READY\n')});
+      runtime.emit({type: 'output', sessionId: 's-1-1', seq: 1, base64: encodeTestBase64('XCOMB_TOOLCHAIN_READY\n')});
       runtime.emit({type: 'output', sessionId: 's-1-1', seq: 2, base64: encodeTestBase64(`${marker.slice(0, 20)}`)});
       runtime.emit({type: 'output', sessionId: 's-1-1', seq: 3, base64: encodeTestBase64(`${marker.slice(20)}\n`)});
       await flushAsync();
@@ -395,7 +395,7 @@ describe('TerminalScreen', () => {
     });
     const has = (testID: string) => renderer.root.findAllByProps({testID}).length > 0;
     await ReactTestRenderer.act(async () => {
-      runtime.emit({type: 'output', sessionId: 's-1-1', seq: 1, base64: encodeTestBase64(`HORUS_TOOLCHAIN_READY\nError: failed to read start time\nsee https://example.com/${'x'.repeat(300)}/end\n`)});
+      runtime.emit({type: 'output', sessionId: 's-1-1', seq: 1, base64: encodeTestBase64(`XCOMB_TOOLCHAIN_READY\nError: failed to read start time\nsee https://example.com/${'x'.repeat(300)}/end\n`)});
       await flushAsync();
     });
     expect(has('terminal-app-exited')).toBe(false);
@@ -416,7 +416,7 @@ describe('TerminalScreen', () => {
     });
     expect(openURL).toHaveBeenCalledTimes(1);
     const issueUrl = String(openURL.mock.calls[0][0]);
-    expect(issueUrl.startsWith('https://github.com/scarif-labs/horus/issues/new?title=Codex%20quit%20unexpectedly&body=')).toBe(true);
+    expect(issueUrl.startsWith('https://github.com/quitsaurabhverma2008-sketch/xcomb/issues/new?title=Codex%20quit%20unexpectedly&body=')).toBe(true);
     expect(decodeURIComponent(issueUrl)).toContain('Error: failed to read start time');
 
     await ReactTestRenderer.act(async () => {
@@ -447,7 +447,7 @@ describe('TerminalScreen', () => {
       await flushAsync();
     });
     await ReactTestRenderer.act(async () => {
-      runtime.emit({type: 'output', sessionId: 's-1-1', seq: 1, base64: encodeTestBase64('HORUS_TOOLCHAIN_READY\nbye\n')});
+      runtime.emit({type: 'output', sessionId: 's-1-1', seq: 1, base64: encodeTestBase64('XCOMB_TOOLCHAIN_READY\nbye\n')});
       runtime.emit({type: 'exit', sessionId: 's-1-1', reason: 'process_exit', exitCode: 0});
       await flushAsync();
     });
@@ -469,7 +469,7 @@ describe('TerminalScreen', () => {
       await flushAsync();
     });
     await ReactTestRenderer.act(async () => {
-      runtime.emit({type: 'output', sessionId: 's-1-1', seq: 1, base64: encodeTestBase64('HORUS_TOOLCHAIN_READY\n$ exit\n')});
+      runtime.emit({type: 'output', sessionId: 's-1-1', seq: 1, base64: encodeTestBase64('XCOMB_TOOLCHAIN_READY\n$ exit\n')});
       runtime.emit({type: 'exit', sessionId: 's-1-1', reason: 'process_exit', exitCode: 0});
       await flushAsync();
     });
@@ -529,7 +529,7 @@ describe('TerminalScreen', () => {
       renderer.root.findByProps({testID: `terminal-install-step-${index}`}).findAllByType(ActivityIndicator).length > 0;
 
     expect(has('terminal-install-progress')).toBe(false);
-    await emitText(1, 'HORUS_INSTALL_TARGET=codex\nHORUS_INSTALL_STAGE=start\nHORUS_INSTALL_STAGE=apk\n(1/7) Installing ada-libs\n');
+    await emitText(1, 'XCOMB_INSTALL_TARGET=codex\nXCOMB_INSTALL_STAGE=start\nXCOMB_INSTALL_STAGE=apk\n(1/7) Installing ada-libs\n');
     expect(has('terminal-install-progress')).toBe(true);
     expect(stepIsActive(1)).toBe(true);
 
@@ -543,7 +543,7 @@ describe('TerminalScreen', () => {
     expect(has('terminal-install-progress')).toBe(true);
     expect(has('harness-mark-codex')).toBe(true);
 
-    await emitText(2, 'HORUS_INSTALL_STAGE=base_ready\nHORUS_INSTALL_STAGE=codex\n');
+    await emitText(2, 'XCOMB_INSTALL_STAGE=base_ready\nXCOMB_INSTALL_STAGE=codex\n');
     expect(stepIsActive(2)).toBe(true);
     expect(has('terminal-install-download')).toBe(false);
     await emitText(3, 'Downloading Codex… 37% (55 of 148 MB)\n');
@@ -551,7 +551,7 @@ describe('TerminalScreen', () => {
     expect(download.props.children).toBe('37% downloaded');
 
     // A failed stage hands the screen back to the transcript and its error.
-    await emitText(4, 'HORUS_INSTALL_STAGE=codex_failed\n');
+    await emitText(4, 'XCOMB_INSTALL_STAGE=codex_failed\n');
     expect(has('terminal-install-progress')).toBe(false);
     await ReactTestRenderer.act(async () => { renderer.unmount(); await flushAsync(); });
   });
@@ -573,7 +573,7 @@ describe('TerminalScreen', () => {
     });
     const has = (testID: string) => renderer.root.findAllByProps({testID}).length > 0;
     await ReactTestRenderer.act(async () => {
-      runtime.emit({type: 'output', sessionId: 's-1-1', seq: 1, base64: encodeTestBase64('HORUS_INSTALL_STAGE=start\nHORUS_INSTALL_STAGE=codex\nDownloading Codex… 1 MB\nDownloading Codex… 2 MB\nnpm error code EAI_AGAIN\nnpm error request to https://registry.npmjs.org/@openai%2fcodex failed\nHORUS_INSTALL_STAGE=codex_failed\nHORUS_INSTALL_COMMAND_EXIT=1\n')});
+      runtime.emit({type: 'output', sessionId: 's-1-1', seq: 1, base64: encodeTestBase64('XCOMB_INSTALL_STAGE=start\nXCOMB_INSTALL_STAGE=codex\nDownloading Codex… 1 MB\nDownloading Codex… 2 MB\nnpm error code EAI_AGAIN\nnpm error request to https://registry.npmjs.org/@openai%2fcodex failed\nXCOMB_INSTALL_STAGE=codex_failed\nXCOMB_INSTALL_COMMAND_EXIT=1\n')});
       await flushAsync();
     });
     await ReactTestRenderer.act(async () => {
@@ -588,7 +588,7 @@ describe('TerminalScreen', () => {
     expect(log).toContain('Process exit: 23');
     expect(log).toContain('Command exit: 1');
     expect(log).not.toContain('registry.npmjs.org');
-    expect(log).not.toContain('HORUS_');
+    expect(log).not.toContain('XCOMB_');
     expect(log).not.toContain('1 MB');
     expect(log).not.toContain('Downloading Codex… 2 MB');
 
@@ -605,14 +605,14 @@ describe('TerminalScreen', () => {
     await ReactTestRenderer.act(async () => { renderer.unmount(); await flushAsync(); });
   });
 
-  test('shows why an install failed when it failed while Horus was in the background', async () => {
+  test('shows why an install failed when it failed while XComb was in the background', async () => {
     const runtime = fakeRuntime();
     let changeAppState: ((state: AppStateStatus) => void) | undefined;
     jest.spyOn(AppState, 'addEventListener').mockImplementation((_type, handler) => {
       changeAppState = handler as (state: AppStateStatus) => void;
       return {remove: () => undefined} as ReturnType<typeof AppState.addEventListener>;
     });
-    const failedInstall = 'npm error code EAI_AGAIN\nHORUS_INSTALL_COMMAND_EXIT=1\nHORUS_INSTALL_STAGE=opencode_failed\n';
+    const failedInstall = 'npm error code EAI_AGAIN\nXCOMB_INSTALL_COMMAND_EXIT=1\nXCOMB_INSTALL_STAGE=opencode_failed\n';
     let subscriptions = 0;
     runtime.spec.subscribeSessionEvents = jest.fn(async (request: {requestId: string; sessionId: string}) => {
       subscriptions += 1;
@@ -644,7 +644,7 @@ describe('TerminalScreen', () => {
     });
     const has = (testID: string) => renderer.root.findAllByProps({testID}).length > 0;
     await ReactTestRenderer.act(async () => {
-      runtime.emit({type: 'output', sessionId: 's-1-1', seq: 1, base64: encodeTestBase64('HORUS_INSTALL_STAGE=start\nHORUS_INSTALL_STAGE=opencode\n')});
+      runtime.emit({type: 'output', sessionId: 's-1-1', seq: 1, base64: encodeTestBase64('XCOMB_INSTALL_STAGE=start\nXCOMB_INSTALL_STAGE=opencode\n')});
       await flushAsync();
     });
     await ReactTestRenderer.act(async () => {
@@ -666,7 +666,7 @@ describe('TerminalScreen', () => {
   test('shows why an install failed when reopening a session whose install failed', async () => {
     const runtime = fakeRuntime();
     runtime.spec.subscribeSessionEvents = jest.fn(async (request: {requestId: string; sessionId: string}) => {
-      runtime.emit({type: 'output', sessionId: request.sessionId, seq: 1, base64: encodeTestBase64('HORUS_INSTALL_STAGE=start\nnpm error code ENOSPC\nHORUS_INSTALL_STAGE=codex_failed\n')});
+      runtime.emit({type: 'output', sessionId: request.sessionId, seq: 1, base64: encodeTestBase64('XCOMB_INSTALL_STAGE=start\nnpm error code ENOSPC\nXCOMB_INSTALL_STAGE=codex_failed\n')});
       return {
         requestId: request.requestId,
         status: 'success' as const,
@@ -711,13 +711,13 @@ describe('TerminalScreen', () => {
       await flushAsync();
     });
     await ReactTestRenderer.act(async () => {
-      runtime.emit({type: 'output', sessionId: 's-1-1', seq: 1, base64: encodeTestBase64('HORUS_INSTALL_STAGE=start\nHORUS_INSTALL_STAGE=codex\n')});
+      runtime.emit({type: 'output', sessionId: 's-1-1', seq: 1, base64: encodeTestBase64('XCOMB_INSTALL_STAGE=start\nXCOMB_INSTALL_STAGE=codex\n')});
       await flushAsync();
     });
     expect(renderer.root.findAllByProps({testID: 'terminal-install-progress'}).length).toBeGreaterThan(0);
 
     await ReactTestRenderer.act(async () => {
-      runtime.emit({type: 'output', sessionId: 's-1-1', seq: 2, base64: encodeTestBase64('HORUS_INSTALL_STAGE=ready\nHORUS_TOOLCHAIN_READY\n')});
+      runtime.emit({type: 'output', sessionId: 's-1-1', seq: 2, base64: encodeTestBase64('XCOMB_INSTALL_STAGE=ready\nXCOMB_TOOLCHAIN_READY\n')});
       await flushAsync();
     });
     expect(renderer.root.findAllByProps({testID: 'terminal-install-progress'})).toHaveLength(0);
@@ -727,9 +727,9 @@ describe('TerminalScreen', () => {
   test('completes a workspace handoff when clone output is replayed from an already exited session', async () => {
     const runtime = fakeRuntime();
     const onCompletion = jest.fn();
-    const marker = 'HORUS_PROJECT_CLONE_COMPLETE_launcher-clone-fast';
+    const marker = 'XCOMB_PROJECT_CLONE_COMPLETE_launcher-clone-fast';
     runtime.spec.subscribeSessionEvents = jest.fn(async (request: {requestId: string; sessionId: string}) => {
-      runtime.emit({type: 'output', sessionId: request.sessionId, seq: 1, base64: encodeTestBase64('HORUS_TOOLCHAIN_READY\n')});
+      runtime.emit({type: 'output', sessionId: request.sessionId, seq: 1, base64: encodeTestBase64('XCOMB_TOOLCHAIN_READY\n')});
       runtime.emit({type: 'output', sessionId: request.sessionId, seq: 2, base64: encodeTestBase64(`${marker}\n`)});
       return {
         requestId: request.requestId,
@@ -777,7 +777,7 @@ describe('TerminalScreen', () => {
       errorCode: 'session_limit_reached',
     }));
     const onCommandFailure = jest.fn();
-    const marker = 'HORUS_PROJECT_CLONE_COMPLETE_launcher-clone-limit';
+    const marker = 'XCOMB_PROJECT_CLONE_COMPLETE_launcher-clone-limit';
     let renderer!: ReactTestRenderer.ReactTestRenderer;
     await ReactTestRenderer.act(async () => {
       renderer = ReactTestRenderer.create(

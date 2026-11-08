@@ -7,7 +7,7 @@ const {DEBIAN_ROOTFS} = require('../src/terminal/distroContract');
 describe('rootfs catalog parity', () => {
   it('mirrors the native debian catalog entry exactly', () => {
     const native = readFileSync(
-      join(__dirname, '../android/app/src/main/java/com/scariflabs/horus/terminal/RootfsCatalog.kt'),
+      join(__dirname, '../android/app/src/main/java/com/scariflabs/xcomb/terminal/RootfsCatalog.kt'),
       'utf8',
     );
     const debian = native.slice(native.indexOf('val DEBIAN = '));

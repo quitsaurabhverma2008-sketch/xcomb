@@ -27,7 +27,7 @@ describe('adb output parsing', () => {
   });
 
   test('explains a missing or outdated app', () => {
-    const output = 'Error while accessing provider:com.scariflabs.horus.remote\njava.lang.IllegalStateException: Could not find provider';
+    const output = 'Error while accessing provider:com.scariflabs.xcomb.remote\njava.lang.IllegalStateException: Could not find provider';
     expect(() => parseContentResult(output)).toThrow(/not installed/);
   });
 
@@ -61,12 +61,12 @@ describe('arguments', () => {
 describe('ssh', () => {
   test('pins the host key per phone and never falls back to passwords', () => {
     const options = sshOptions({port: 5000, key: '/k', knownHosts: '/kh', serial: 'ab:cd'}).join(' ');
-    expect(options).toContain('HostKeyAlias=horus-ab_cd');
+    expect(options).toContain('HostKeyAlias=xcomb-ab_cd');
     expect(options).toContain('StrictHostKeyChecking=accept-new');
     expect(options).toContain('UserKnownHostsFile=/kh');
     expect(options).toContain('PasswordAuthentication=no');
     expect(options).toContain('IdentitiesOnly=yes');
-    expect(hostKeyAlias('emulator-5554')).toBe('horus-emulator-5554');
+    expect(hostKeyAlias('emulator-5554')).toBe('xcomb-emulator-5554');
   });
 
   test('quotes arguments for the remote shell', () => {
@@ -76,10 +76,10 @@ describe('ssh', () => {
   });
 
   test('writes a ProxyCommand config block', () => {
-    const block = sshConfigBlock({name: 'pixel', serial: 'S1', username: 'horus', key: '/k', knownHosts: '/kh', horusCommand: 'horus'});
+    const block = sshConfigBlock({name: 'pixel', serial: 'S1', username: 'xcomb', key: '/k', knownHosts: '/kh', xcombCommand: 'xcomb'});
     expect(block).toContain('Host pixel\n');
-    expect(block).toContain('  ProxyCommand horus proxy S1\n');
-    expect(block).toContain('  HostKeyAlias horus-S1\n');
+    expect(block).toContain('  ProxyCommand xcomb proxy S1\n');
+    expect(block).toContain('  HostKeyAlias xcomb-S1\n');
   });
 });
 

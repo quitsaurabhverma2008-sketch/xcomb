@@ -3,7 +3,7 @@ import {StyleSheet, Text, View} from 'react-native';
 import {BrandMark} from '../terminal/BrandMark';
 import {uiColors} from '../terminal/palette';
 import {InteractivePressable as Pressable} from './InteractivePressable';
-import {HORUS_WORDMARK_FONT_FAMILY, UI_FONT_FAMILY} from './typography';
+import {XCOMB_WORDMARK_FONT_FAMILY, UI_FONT_FAMILY} from './typography';
 
 export {uiColors};
 
@@ -23,7 +23,7 @@ export function BrandHeader({title, eyebrow = 'XCOMB', meta = 'v0.1', action}: B
         <View style={styles.divider} />
         <View style={[styles.heading, !hasEyebrow && styles.singleHeading]}>
           {hasEyebrow ? <Text numberOfLines={1} style={styles.eyebrow}>{eyebrow}</Text> : null}
-          <Text numberOfLines={1} style={[styles.title, !hasEyebrow && styles.singleTitle, title === 'XCOMB' && styles.horusWordmark]}>{title}</Text>
+          <Text numberOfLines={1} style={[styles.title, !hasEyebrow && styles.singleTitle, title === 'XCOMB' && styles.xcombWordmark]}>{title}</Text>
         </View>
         <View style={styles.endActions}>
           {meta === null ? null : <Text numberOfLines={1} style={styles.meta}>{meta}</Text>}
@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
   endActions: {alignItems: 'center', flexDirection: 'row'},
   eyebrow: {color: uiColors.muted, fontFamily: UI_FONT_FAMILY, fontSize: 10, letterSpacing: 0.7},
   title: {color: uiColors.ink, fontFamily: UI_FONT_FAMILY, fontSize: 22, fontWeight: '800', letterSpacing: 0.2, marginTop: 2},
-  horusWordmark: {fontFamily: HORUS_WORDMARK_FONT_FAMILY, fontSize: 22, fontWeight: '400', letterSpacing: 2.5, includeFontPadding: false},
+  xcombWordmark: {fontFamily: XCOMB_WORDMARK_FONT_FAMILY, fontSize: 22, fontWeight: '400', letterSpacing: 2.5, includeFontPadding: false},
   singleTitle: {marginTop: 0},
   meta: {color: uiColors.muted, fontFamily: UI_FONT_FAMILY, fontSize: 10, marginLeft: 8},
   rule: {backgroundColor: uiColors.border, height: 1, marginTop: 8},

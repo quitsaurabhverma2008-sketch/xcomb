@@ -22,7 +22,7 @@ jest.mock('../src/files/fileExplorer', () => ({
   readGuestTextFile: jest.fn(async () => ({kind: 'success', content: 'hello files', sizeBytes: 11})),
   exportGuestDirectory: jest.fn(async () => ({
     kind: 'success',
-    destination: 'Download/Horus/projects-20260928-143205',
+    destination: 'Download/XComb/projects-20260928-143205',
     fileCount: 2,
     byteCount: 2048,
     skippedCount: 1,
@@ -246,7 +246,7 @@ describe('FileExplorerScreen', () => {
     });
     expect(exportGuestDirectory).toHaveBeenCalledWith('home', ['projects']);
     expect(renderer?.root.findByProps({testID: 'file-export-result'}).props.children).toBe(
-      'Copied 2 files (2 KB) to Download/Horus/projects-20260928-143205. 1 item was skipped (symlinks, special files, or unreadable files).',
+      'Copied 2 files (2 KB) to Download/XComb/projects-20260928-143205. 1 item was skipped (symlinks, special files, or unreadable files).',
     );
 
     await ReactTestRenderer.act(async () => {

@@ -11,7 +11,7 @@ import {InteractivePressable as Pressable} from './InteractivePressable';
 import {UI_FONT_FAMILY} from './typography';
 import {useHardwareBack} from './useHardwareBack';
 
-const ADD_USER_REQUEST_ID = 'horus-add-user-1';
+const ADD_USER_REQUEST_ID = 'xcomb-add-user-1';
 
 export type AddUserActions = Readonly<{
   /** Installs [distro]'s rootfs beside the active one, without switching new sessions to it. */

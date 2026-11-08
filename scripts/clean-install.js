@@ -6,7 +6,7 @@ const path = require('node:path');
 const {spawnSync} = require('node:child_process');
 
 const projectRoot = path.resolve(__dirname, '..');
-const candidate = fs.mkdtempSync(path.join(os.tmpdir(), 'horus-clean-'));
+const candidate = fs.mkdtempSync(path.join(os.tmpdir(), 'xcomb-clean-'));
 
 function included(source) {
   const relative = path.relative(projectRoot, source);

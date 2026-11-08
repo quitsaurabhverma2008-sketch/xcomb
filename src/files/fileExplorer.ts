@@ -54,7 +54,7 @@ export const GUEST_FILE_QUERY_MAX_OUTPUT_BYTES = 131_072 as const;
 const MAX_PATH_COMPONENTS = 16;
 const MAX_PATH_COMPONENT_BYTES = 255;
 const MAX_QUOTED_PATH_LENGTH = 2048;
-const MARKER_PREFIX = 'HORUS_FILE_QUERY';
+const MARKER_PREFIX = 'XCOMB_FILE_QUERY';
 const BASE64_PATTERN = /^[A-Za-z0-9+/]*={0,2}$/;
 const FILE_KINDS: readonly GuestFileEntry['kind'][] = [
   'directory',
@@ -725,7 +725,7 @@ async function ensureDownloadsWritable(): Promise<boolean> {
 
 /**
  * Copies every regular file below a guest directory into the shared
- * Download/Horus/<folder>-<timestamp> folder. Native-only: the PTY fallback
+ * Download/XComb/<folder>-<timestamp> folder. Native-only: the PTY fallback
  * has no route to shared storage.
  */
 export async function exportGuestDirectory(

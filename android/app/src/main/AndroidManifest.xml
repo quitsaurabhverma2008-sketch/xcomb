@@ -10,6 +10,9 @@
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
     <!-- Only Android 7-9 need this to copy files into Download; 10+ use MediaStore. -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
+    <!-- All files access: lets the file manager and the AI agents work on phone storage. -->
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
 
     <application
       android:name=".MainApplication"
@@ -43,11 +46,20 @@
           android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
           android:value="user-visible interactive Alpine terminal sessions, toolchain preparation, browser-assisted CLI authentication, and opt-in USB SSH access from a paired computer" />
       </service>
-      <!-- Reached only by `adb shell content call` from the horus CLI; the
+      <!-- Reached only by `adb shell content call` from the xcomb CLI; the
            provider rejects every caller except the adb shell and root. -->
       <provider
         android:name=".terminal.RemoteAccessProvider"
         android:authorities="${applicationId}.remote"
         android:exported="true" />
+      <provider
+        android:name="androidx.core.content.FileProvider"
+        android:authorities="${applicationId}.share"
+        android:exported="false"
+        android:grantUriPermissions="true">
+        <meta-data
+          android:name="android.support.FILE_PROVIDER_PATHS"
+          android:resource="@xml/share_paths" />
+      </provider>
     </application>
 </manifest>

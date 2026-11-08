@@ -448,9 +448,9 @@ export type AcknowledgeSessionOutputResponse = {
 };
 
 /**
- * Native code accepts `home`, `workspace`, or `agent:<key>` and validates the
- * value again before touching disk. Kept as a plain string for React Native
- * codegen, which cannot parse the template-literal form of this type.
+ * React Native codegen cannot parse the template-literal form of this type.
+ * Keep it a plain string here; the native layer validates the actual root
+ * value again before touching disk.
  */
 export type GuestFileRootName = string;
 

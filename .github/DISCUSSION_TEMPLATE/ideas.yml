@@ -4,7 +4,7 @@ body:
     attributes:
       value: |
         Search existing Ideas and Issues before starting a topic. Describe a real workflow; discussion does not commit the project to a release or timeline.
-        Do not include secrets, private code, or personal information. See [contribution guidance](https://github.com/scarif-labs/horus/blob/main/CONTRIBUTING.md) for reporting and proposal guidance.
+        Do not include secrets, private code, or personal information. See [contribution guidance](https://github.com/quitsaurabhverma2008-sketch/xcomb/blob/main/CONTRIBUTING.md) for reporting and proposal guidance.
   - type: textarea
     id: problem
     attributes:

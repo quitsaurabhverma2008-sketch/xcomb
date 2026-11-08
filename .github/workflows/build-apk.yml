@@ -55,10 +55,10 @@ jobs:
         working-directory: android
         run: |
           ./gradlew :app:assembleRelease --no-daemon --stacktrace --max-workers=2 \
-            -Phorus.releaseStoreFile="$RUNNER_TEMP/xcomb.jks" \
-            -Phorus.releaseStorePassword=xcombpass \
-            -Phorus.releaseKeyAlias=xcomb \
-            -Phorus.releaseKeyPassword=xcombpass
+            -Pxcomb.releaseStoreFile="$RUNNER_TEMP/xcomb.jks" \
+            -Pxcomb.releaseStorePassword=xcombpass \
+            -Pxcomb.releaseKeyAlias=xcomb \
+            -Pxcomb.releaseKeyPassword=xcombpass
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
           name: xcomb-apk

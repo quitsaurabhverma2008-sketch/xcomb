@@ -64,7 +64,7 @@ $CC -O2 -fPIC -fvisibility=hidden -D_GNU_SOURCE=1 -D__STDC_WANT_LIB_EXT1__=1 \
 # Termux's patched NDK headers supply _PATH_TMP and a transitive <fcntl.h>;
 # the stock NDK does neither. Key symlinks live in the app's own cache dir.
 $CC -O2 -fPIC -std=c11 -ffile-prefix-map="$REPO_ROOT"=. \
-  -include fcntl.h -D_PATH_TMP="\"/data/data/com.scariflabs.horus/cache/\"" \
+  -include fcntl.h -D_PATH_TMP="\"/data/data/com.scariflabs.xcomb/cache/\"" \
   -c "$NATIVE_DIR/libandroid-shmem/shmem.c" -o "$WORK_DIR/shmem.o"
 "$AR" rcsD "$WORK_DIR/lib/libtalloc.a" "$WORK_DIR/talloc.o"
 "$AR" rcsD "$WORK_DIR/lib/libandroid-shmem.a" "$WORK_DIR/shmem.o"

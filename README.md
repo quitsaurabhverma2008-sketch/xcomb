@@ -43,6 +43,14 @@ sessions keep running with the screen off.
 No root. No Termux. No computer. Everything runs on the phone, in the app
 sandbox, with a warm black and yellow interface built for a touch screen.
 
+## About this project
+
+XComb is an independent project, owned and maintained in full by its author.
+This repository contains the complete XComb source. The project is **not built
+from any secret, leaked, or confidential source**, and no proprietary
+third-party source code is included. XComb is released under the
+[MIT license](LICENSE).
+
 ## Highlights
 
 | | |
@@ -50,12 +58,13 @@ sandbox, with a warm black and yellow interface built for a touch screen.
 | **Real Linux** | Alpine Linux ARM64, unpacked from a pinned minirootfs and checked against SHA-256 before it runs. `git`, `curl`, `jq`, `rg`, `python3`, Node and `apk add` work like a normal box. |
 | **A terminal that behaves** | Native PTY and renderer with resize, Ctrl-C, and job control. The key bar adds Esc, Tab, arrows, paste, and sticky Ctrl/Alt for everything a phone keyboard leaves out. Select text with the COPY key or a long-press. |
 | **A browser built in** | Tap the yellow three-dot menu at the top-left of the terminal, then choose **Split screen** (browser on top, terminal below, with a draggable divider) or **Small window** (a floating browser you can move and resize). Local http(s) dev servers, `about:`, `data:` and other URL types load; localhost links in the terminal open here too. |
-| **Omni Router connector** | Swipe right from HOME to **CONNECTORS**. Open Omni Router; XComb installs and starts it, then opens its dashboard in a small browser window. |
-| **Config editor** | Swipe right again to **CONFIG**. Open the `.opencode`, `.claude`, `.codex`, `.freebuff`, `.gemini` and `.omniroute` folders, open a file, edit it and save it without leaving XComb. |
+| **Full file manager** | Browse **Phone storage**, **Linux home**, **Workspace** and **Favorites**. Search, sort by name/date/size, multi-select, copy, cut, paste, rename, delete, share, zip, unzip, import from the phone picker, and edit text files in place. |
+| **Phone storage for agents** | Grant **All files access** and XComb binds `/sdcard` into Linux. Agents can then read and write the phone files you choose, and the same storage is available in the file manager. |
+| **Config editor** | Swipe right from HOME to **CONFIG**. Each tool folder opens in the file manager, locked to that folder, so you can edit `.opencode`, `.claude`, `.codex`, `.freebuff`, `.gemini` and `.omniroute` files without leaving XComb. |
+| **Omni Router connector** | Swipe to **CONNECTORS**. Open Omni Router; XComb installs and starts it, then opens its dashboard in a small browser window. |
 | **Five agents, one tap** | Claude Code, Codex, OpenCode, Gemini CLI and FreeBuff each install on first open, with the installer output right in the terminal. |
 | **Sessions that survive** | Terminals run in a foreground service in their own process. Lock the phone or close the UI; the agent keeps working and notifies you when it needs an answer. |
 | **Your projects** | Create a folder, clone any HTTPS or SSH Git URL, or sign in to GitHub and pick from your repositories. Everything lives under `/workspace/projects`. |
-| **A file browser** | Preview what the agents changed, then copy any folder to `Download/XComb` in one tap. |
 | **Private by default** | No analytics, ads, crash reporting, or Google services. An optional password locks the app after 15 minutes in the background. |
 | **Optional remote access** | Pair a computer over USB for an SSH shell on the phone. Off by default, loopback only, key-only logins. |
 
@@ -79,10 +88,12 @@ stay inside each CLI; XComb never handles provider passwords.
 ### Download the APK
 
 1. Open the [latest release](https://github.com/quitsaurabhverma2008-sketch/xcomb/releases/latest).
-2. Download **`XComb-1.1.4.apk`**.
+2. Download **`XComb_1.1.5.apk`**.
 3. **Uninstall any older build first.** CI builds are signed with a per-run
    throwaway key, so Android refuses to update an app signed by another key.
-   Export anything you need from `/workspace` before uninstalling.
+   This release also uses a new application ID, so it installs as a fresh app.
+   The old app stays separate and its data is not migrated. Export anything you
+   need from `/workspace` before uninstalling.
 4. Open the APK, allow installs from your browser or file manager, and install.
 5. Launch XComb and create your Linux user.
 
@@ -90,8 +101,8 @@ You need an **ARM64** phone (`arm64-v8a`) on **Android 7.0** or newer. The first
 launch downloads Alpine Linux and verifies it before unpacking.
 
 > **Data warning:** uninstalling the app removes its private storage, including
-> `/workspace` and every agent home. Copy important projects to shared Downloads
-> first with **Files → Copy this folder to Downloads**.
+> `/workspace` and every agent home. Copy important projects into
+> `Download/XComb` with the file manager before uninstalling.
 
 ### First run
 
@@ -100,6 +111,8 @@ launch downloads Alpine Linux and verifies it before unpacking.
 3. Tap an agent tile. XComb installs that CLI the first time you open it.
 4. Sign in inside the CLI. XComb never sees the provider password.
 5. Create or clone a project under `/workspace/projects`.
+6. Open **Files** and tap **GRANT** if you want the file manager and agents to
+   use phone storage. You can also grant or revoke it later in Android Settings.
 
 ## Using XComb
 
@@ -107,8 +120,42 @@ launch downloads Alpine Linux and verifies it before unpacking.
 
 The home screen shows your Linux user, GitHub account, storage, RAM, network and
 battery state, the six session tiles, and any sessions that are already running.
-**Settings** is in the top right; **Browse your files** opens the read-only file
-browser.
+**Settings** is in the top right; **Browse your files** opens the full file
+manager.
+
+### File manager
+
+Tap **Files** from the home screen or a session.
+
+- **Tabs:** Phone storage, Linux home, Workspace, and Favorites. The CONFIG page
+  also opens the manager locked to a tool's folder.
+- **Search and sort:** search below the current folder; sort by name, date, or
+  size in list view.
+- **File actions** (⋮): Open as archive (zip, jar, apk), Compress (zip),
+  Information, Copy, Cut, Delete, Rename, Share, and Add to Favorites.
+- **Plus menu:** New folder, New file, New archive, and Import from phone.
+- **Multi-select:** long-press a file or folder, then copy, cut, zip, delete, or
+  share several items together. A paste bar appears when the clipboard has
+  files.
+- **Text editing:** tap a text file, edit it, and save in place.
+- **Storage access:** if phone storage is not available, the banner's **GRANT**
+  button opens Android's All files access screen.
+
+Archive support is **zip only**; 7z and custom compression are not included.
+Android/data and Android/obb remain restricted on modern Android versions even
+after All files access is granted.
+
+### Phone storage for agents
+
+With All files access granted, XComb binds the shared phone storage to
+`/sdcard` and `/storage/emulated/0` inside Linux. Agents can read and write the
+files you choose from their terminals. The same files appear in the file
+manager's **Phone storage** tab.
+
+All files access is broad. Grant it only if you want agents and the file manager
+to work on shared phone storage. XComb itself still keeps Linux files under its
+private app storage and only accepts file-manager paths below its configured
+roots.
 
 ### Connectors and config
 
@@ -116,8 +163,9 @@ Swipe right from HOME to **CONNECTORS**. Omni Router installs and starts on firs
 open, then its dashboard opens in a small browser window.
 
 Swipe right again to **CONFIG**. Open the `.opencode`, `.claude`, `.codex`,
-`.freebuff`, `.gemini` and `.omniroute` folders, open a text file, edit it and
-save it without leaving XComb.
+`.freebuff`, `.gemini` and `.omniroute` folders. Each opens in the file manager
+locked to that tool's directory, where you can edit text files, create folders,
+import files, zip, or delete items.
 
 ### Sessions
 
@@ -130,12 +178,6 @@ session: the terminal lives in a foreground service in the `:terminal` process.
 Create an empty folder, clone an HTTPS or SSH URL, or sign in to GitHub with a
 browser device login and pick a repository. Projects live under
 `/workspace/projects` and are visible to every agent user.
-
-### Files
-
-The read-only browser previews text files, shows sizes, and copies a folder to
-`Download/XComb` for sharing. It is the easiest way to rescue work before an
-uninstall.
 
 ### Settings
 
@@ -173,6 +215,11 @@ A companion CLI in [`cli/`](cli/README.md) handles pairing and port forwarding.
   approval prompts still apply.
 - **Remote access is off until paired.** Any app on the phone can reach loopback
   ports, so the paired key is what keeps others out.
+- **File-manager paths are restricted to configured roots.** The native bridge
+  rejects paths outside phone storage and XComb's private Linux roots, and it
+  refuses to delete a root itself.
+- **All files access is optional and broad.** Grant it only when you want the
+  file manager and agents to reach shared phone storage.
 
 ### Permissions
 
@@ -184,17 +231,22 @@ A companion CLI in [`cli/`](cli/README.md) handles pairing and port forwarding.
 | `WAKE_LOCK` | Keep the CPU awake while a session is running |
 | `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` | Asked for during setup so Android does not pause long agent runs |
 | `VIBRATE` | Short haptic feedback on button taps |
-| `WRITE_EXTERNAL_STORAGE` (API ≤ 28 only) | Copy a folder to `Download/XComb` on old Android versions |
+| `WRITE_EXTERNAL_STORAGE` (API ≤ 28 only) | Copy files to `Download/XComb` on older Android versions |
+| `READ_EXTERNAL_STORAGE` (API ≤ 32 only) | Read shared storage on Android versions before All files access |
+| `MANAGE_EXTERNAL_STORAGE` (optional) | Full file manager and `/sdcard` for agents; granted from the Files banner or Android Settings |
 
 ## How it works
 
 ```
 React Native UI (App.tsx, src/)
   │  TerminalRuntime TurboModule + TerminalCanvas / TerminalInput native views
+  │  XCombFiles native module (file manager)
   ▼
 Kotlin native layer (android/app/src/main/java/.../terminal)
   ├─ DistroStore*            rootfs download → verify → extract → promote
   ├─ ProotSessionLauncher    builds the PRoot command line and guest environment
+  ├─ XCombFilesModule        file manager bridge: list, search, copy, zip, share
+  ├─ FileOps                 java.io file operations used by the bridge and tests
   ├─ TerminalSessionService  foreground service in the :terminal process
   └─ NativeTerminalEngine / TerminalCanvasView  VT parsing and rendering
         │
@@ -203,7 +255,8 @@ terminal_pty.c (JNI) ── PRoot (native/, built from source) ── Alpine roo
 ```
 
 Each agent runs as its own guest user with a private home; all agent users share
-workspace GID 1000.
+workspace GID 1000. Phone storage is mounted at `/sdcard` only when All files
+access is available.
 
 ## Build from source
 
@@ -230,8 +283,9 @@ the pinned PRoot and libandroid-shmem sources.
 
 Debug builds embed the JavaScript bundle, so they start without Metro. Release
 builds stay unsigned unless you pass a keystore through the Gradle properties
-declared in `android/app/build.gradle` (the property names are unchanged from
-the fork base), for example in `~/.gradle/gradle.properties`.
+declared in `android/app/build.gradle` (`xcomb.releaseStoreFile`,
+`xcomb.releaseStorePassword`, `xcomb.releaseKeyAlias`, `xcomb.releaseKeyPassword`),
+for example in `~/.gradle/gradle.properties`.
 
 ### GitHub Actions
 
@@ -263,11 +317,13 @@ hide a buildable APK.
 
 | Symptom | Fix |
 | :-- | :-- |
-| **"App not installed"** | An older build signed with a different key is still installed. Uninstall it first — app data will be removed. |
+| **"App not installed"** | An older build signed with a different key is still installed. Uninstall it first — app data will be removed. This release also has a new application ID, so it installs as a separate app. |
+| **Phone storage is missing in Files** | Tap **GRANT** on the storage banner, allow All files access in Android Settings, then return to XComb. |
+| **An agent cannot see `/sdcard`** | Grant All files access, then start a new session so the bind is applied. Android/data and Android/obb remain restricted. |
 | **First launch is slow** | Alpine is downloading and verifying. Keep the phone on Wi-Fi and the app in the foreground. |
 | **An agent fails to install** | Check the network and the package mirror in **Settings**. Reopen the tile to retry. |
 | **Session stops when the screen locks** | Allow XComb to ignore battery optimizations and keep the foreground-service notification enabled. |
-| **I need my files before uninstalling** | **Files → Copy this folder to Downloads** copies to `Download/XComb`. |
+| **I need my files before uninstalling** | Copy important projects into `Download/XComb` with the file manager. |
 | **No root / no Termux?** | Correct. XComb ships its own Linux runtime and needs neither. |
 | **Which phones work?** | ARM64 (`arm64-v8a`), Android 7.0 (API 24) or newer. |
 
@@ -276,18 +332,14 @@ hide a buildable APK.
 | | |
 | :-- | :-- |
 | App label | **XComb** |
-| Application ID | Unchanged from the MIT-licensed fork base — declared in [`android/app/build.gradle`](android/app/build.gradle) |
-| Version | `1.1.4` (versionCode `10`) |
+| Application ID | New XComb application ID declared in [`android/app/build.gradle`](android/app/build.gradle) |
+| Version | `1.1.5` (versionCode `11`) |
 | ABI | `arm64-v8a` only |
 | Min / target SDK | 24 / 36 |
 | Source | <https://github.com/quitsaurabhverma2008-sketch/xcomb> |
 | Releases | <https://github.com/quitsaurabhverma2008-sketch/xcomb/releases> |
 | Issue tracker | <https://github.com/quitsaurabhverma2008-sketch/xcomb/issues> |
 | License | [MIT](LICENSE); bundled components in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) |
-
-The application ID and native module names were kept from the fork base so the
-native layer does not need a parallel rewrite. They are implementation details;
-the app label, UI and documentation are XComb.
 
 ## Third-party build components
 
@@ -308,6 +360,10 @@ checked against a SHA-256 in
 then Alpine packages, then each agent from its publisher the first time it is
 opened.
 
+Agent names and marks belong to their respective owners. See
+[`src/terminal/harness-logos/README.md`](src/terminal/harness-logos/README.md)
+for logo sources and licenses.
+
 ## Contributing
 
 Use [Issues](https://github.com/quitsaurabhverma2008-sketch/xcomb/issues) for
@@ -316,18 +372,6 @@ reproducible bugs and concrete feature requests. Read
 [Code of Conduct](.github/CODE_OF_CONDUCT.md), and the
 [security policy](.github/SECURITY.md) before opening a pull request or reporting
 a vulnerability.
-
-## Credits
-
-XComb is an independent UI rebrand of an MIT-licensed Android/Linux terminal
-project. The Linux runtime, terminal engine and most of the Android architecture
-come from that project and remain under its original copyright. XComb-specific
-work covers the UI theme, branding, agent artwork, avatars, documentation and
-store metadata.
-
-Agent names and marks belong to their respective owners. See
-[`src/terminal/harness-logos/README.md`](src/terminal/harness-logos/README.md)
-for logo sources.
 
 ## License
 

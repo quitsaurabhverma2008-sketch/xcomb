@@ -72,7 +72,7 @@ describe('remote access', () => {
       const status = () => renderer?.root.findByProps({testID: 'remote-access-status'}).props.children;
       expect(status()).toContain('On.');
 
-      // `horus stop` on the computer.
+      // `xcomb stop` on the computer.
       read.mockImplementation(async () => off);
       await ReactTestRenderer.act(async () => { await jest.advanceTimersByTimeAsync(5000); });
       expect(status()).toBe('Off. Nothing is listening.');

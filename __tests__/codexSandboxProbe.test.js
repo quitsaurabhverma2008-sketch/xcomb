@@ -10,7 +10,7 @@ describe('Codex sandbox capability probe under PRoot', () => {
   let directory;
 
   beforeAll(() => {
-    fixtures = mkdtempSync(path.join(tmpdir(), 'horus-sandbox-fixtures-'));
+    fixtures = mkdtempSync(path.join(tmpdir(), 'xcomb-sandbox-fixtures-'));
     // macOS has no coreutils timeout. Verify the guest deadline arguments,
     // then run the immediate fixture; spawnSync supplies the host deadline.
     writeFileSync(path.join(fixtures, 'timeout'), `#!/bin/sh
@@ -41,7 +41,7 @@ exit "$PROBE_FIXTURE_EXIT"
   });
 
   beforeEach(() => {
-    directory = mkdtempSync(path.join(tmpdir(), 'horus-sandbox-test-'));
+    directory = mkdtempSync(path.join(tmpdir(), 'xcomb-sandbox-test-'));
   });
 
   afterEach(() => {

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Generates android/app/src/main/java/com/scariflabs/horus/terminal/TerminalCharWidth.kt
+ * Generates android/app/src/main/java/com/scariflabs/xcomb/terminal/TerminalCharWidth.kt
  * from the Unicode 11 width tables of the pinned @xterm/addon-unicode11 (read
  * from its published source map), so NativeTerminalEngine measures characters
  * exactly as the xterm.js reference used by the VT conformance test does.
@@ -60,7 +60,7 @@ const rows = [];
 for (let i = 0; i < runs.length; i += 4) {
   rows.push('    ' + runs.slice(i, i + 4).map(([a, b, w]) => `${hex(a)}, ${hex(b)}, ${w},`).join(' '));
 }
-const kotlin = `package com.scariflabs.horus.terminal
+const kotlin = `package com.scariflabs.xcomb.terminal
 
 /**
  * Terminal cell width of a code point (0, 1 or 2), identical to the Unicode 11
@@ -96,6 +96,6 @@ ${rows.join('\n')}
   private val RUN_COUNT = RUNS.size / 3
 }
 `;
-const out = resolve(root, 'android/app/src/main/java/com/scariflabs/horus/terminal/TerminalCharWidth.kt');
+const out = resolve(root, 'android/app/src/main/java/com/scariflabs/xcomb/terminal/TerminalCharWidth.kt');
 writeFileSync(out, kotlin);
 console.log(`wrote ${runs.length} runs to ${out}`);

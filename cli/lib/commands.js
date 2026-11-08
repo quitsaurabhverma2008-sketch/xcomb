@@ -30,7 +30,7 @@ async function discover() {
     let status = null;
     let problem = null;
     try {
-      status = await adb.callHorus(device.serial, 'status', {fingerprint: key.fingerprint});
+      status = await adb.callXComb(device.serial, 'status', {fingerprint: key.fingerprint});
     } catch (error) {
       problem = error.message;
     }
@@ -52,9 +52,9 @@ async function resolveDevice(wanted, {requirePaired = true} = {}) {
     const match = devices.find(device => device.name === wanted || device.serial === wanted);
     if (!match) {
       const known = Object.entries(state.readDevices()).find(([serial, entry]) => entry.name === wanted || serial === wanted);
-      throw new UsageError(known ? `${wanted} is not connected. Plug it in over USB and allow USB debugging.` : `No phone called ${wanted}. Run \`horus devices\`.`);
+      throw new UsageError(known ? `${wanted} is not connected. Plug it in over USB and allow USB debugging.` : `No phone called ${wanted}. Run \`xcomb devices\`.`);
     }
-    if (requirePaired && !match.paired) throw new UsageError(`${wanted} is not paired with this computer. Run \`horus pair ${wanted}\`.`);
+    if (requirePaired && !match.paired) throw new UsageError(`${wanted} is not paired with this computer. Run \`xcomb pair ${wanted}\`.`);
     return match;
   }
   const candidates = devices.filter(device => (requirePaired ? device.paired : device.status !== null));
@@ -62,13 +62,13 @@ async function resolveDevice(wanted, {requirePaired = true} = {}) {
   if (candidates.length === 0) {
     if (devices.length === 0) throw new UsageError('No phone is connected. Plug one in over USB and allow USB debugging.');
     const reason = devices.find(device => device.problem)?.problem;
-    throw new UsageError(requirePaired ? 'No paired phone is connected. Run `horus pair` first.' : reason ?? 'Horus is not installed on the connected phone.');
+    throw new UsageError(requirePaired ? 'No paired phone is connected. Run `xcomb pair` first.' : reason ?? 'XComb is not installed on the connected phone.');
   }
   throw new UsageError(`Several phones are connected: ${candidates.map(device => device.name ?? device.serial).join(', ')}. Name one.`);
 }
 
 /**
- * Makes sure the SSH server is up: restarts it after a reboot and opens Horus
+ * Makes sure the SSH server is up: restarts it after a reboot and opens XComb
  * if Android will not start it from the background. Returns the latest status.
  */
 async function ensureServer(device, {quiet = false} = {}) {
@@ -80,17 +80,17 @@ async function ensureServer(device, {quiet = false} = {}) {
   let asked = false;
   while (Date.now() < deadline) {
     if (!status.enabled) {
-      throw new UsageError(`Remote access is off on ${device.name ?? device.serial}. Turn it on in Horus → Settings, or run \`horus pair\` again.`);
+      throw new UsageError(`Remote access is off on ${device.name ?? device.serial}. Turn it on in XComb → Settings, or run \`xcomb pair\` again.`);
     }
     if (status.state === 'running') return status;
     if (status.state === 'failed' && asked) {
-      throw new UsageError(`The SSH server on the phone failed (${status.detail || 'unknown'}). Run \`horus status --log\` for details.`);
+      throw new UsageError(`The SSH server on the phone failed (${status.detail || 'unknown'}). Run \`xcomb status --log\` for details.`);
     }
     if ((status.state === 'stopped' || status.state === 'failed') && !asked) {
       asked = true;
-      const result = await adb.callHorus(device.serial, 'start');
+      const result = await adb.callXComb(device.serial, 'start');
       if (result.status === 'start_refused' && !openedApp) {
-        say('Android would not start remote access in the background; opening Horus on the phone…');
+        say('Android would not start remote access in the background; opening XComb on the phone…');
         openedApp = true;
         await adb.openApp(device.serial).catch(() => undefined);
       }
@@ -100,7 +100,7 @@ async function ensureServer(device, {quiet = false} = {}) {
       say('Installing the SSH server on the phone (first time only)…');
     }
     await sleep(POLL_MS);
-    status = await adb.callHorus(device.serial, 'status');
+    status = await adb.callXComb(device.serial, 'status');
   }
   throw new UsageError('Timed out waiting for the SSH server on the phone.');
 }
@@ -127,7 +127,7 @@ function run(command, args, {stdio = 'inherit'} = {}) {
 }
 
 async function readPassword(prompt) {
-  if (process.env.HORUS_PASSWORD) return process.env.HORUS_PASSWORD;
+  if (process.env.XCOMB_PASSWORD) return process.env.XCOMB_PASSWORD;
   const input = process.stdin;
   if (!input.isTTY) {
     // Piped: the first line is the password.
@@ -186,8 +186,8 @@ async function devicesCommand() {
     const status = device.status;
     let summary;
     if (!status) summary = device.problem;
-    else if (!status.configured) summary = 'Horus is not set up yet';
-    else if (!device.paired) summary = 'not paired (run `horus pair`)';
+    else if (!status.configured) summary = 'XComb is not set up yet';
+    else if (!device.paired) summary = 'not paired (run `xcomb pair`)';
     else if (!status.enabled) summary = 'paired, remote access off';
     else summary = `paired, server ${status.state}`;
     const battery = typeof status?.battery === 'number' ? `${status.battery}%${status.charging ? '+' : ''}` : '';
@@ -205,7 +205,7 @@ async function pairCommand(args) {
   const device = await resolveDevice(args.positional[0], {requirePaired: false});
   const status = device.status;
   if (!status) throw new UsageError(device.problem);
-  if (!status.configured) throw new UsageError('Open Horus on the phone and finish setup first.');
+  if (!status.configured) throw new UsageError('Open XComb on the phone and finish setup first.');
   const key = state.ensureKey();
   const devices = state.readDevices();
   const requested = args.flags.name;
@@ -218,8 +218,8 @@ async function pairCommand(args) {
   }
 
   log(`Pairing ${status.model} (${device.serial}) as "${name}".`);
-  const password = await readPassword('Horus password on the phone: ');
-  const result = await adb.callHorus(device.serial, 'pair', {
+  const password = await readPassword('XComb password on the phone: ');
+  const result = await adb.callXComb(device.serial, 'pair', {
     password,
     keyType: key.type,
     keyData: key.data,
@@ -229,11 +229,11 @@ async function pairCommand(args) {
     case 'ok':
       break;
     case 'incorrect':
-      throw new UsageError('That is not the Horus password. Too many wrong tries lock pairing and the app for a while.');
+      throw new UsageError('That is not the XComb password. Too many wrong tries lock pairing and the app for a while.');
     case 'locked':
       throw new UsageError(`Too many wrong passwords. Try again in ${Math.ceil(result.retryAfterMs / 1000)} seconds.`);
     case 'not_configured':
-      throw new UsageError('Open Horus on the phone and finish setup first.');
+      throw new UsageError('Open XComb on the phone and finish setup first.');
     default:
       throw new UsageError(`Pairing failed: ${result.status}`);
   }
@@ -242,24 +242,24 @@ async function pairCommand(args) {
   log(`Paired. The phone now trusts this computer's key ${result.fingerprint}.`);
 
   // Pairing happens over USB, so it may re-trust a phone whose host key
-  // changed (Horus reinstalled or its data cleared). Other connections still
+  // changed (XComb reinstalled or its data cleared). Other connections still
   // refuse a changed key.
   const files = state.paths();
   if (fs.existsSync(files.knownHosts)) {
     await run('ssh-keygen', ['-R', hostKeyAlias(device.serial), '-f', files.knownHosts], {stdio: 'ignore'}).catch(() => undefined);
   }
-  const paired = {...device, name, paired: true, status: await adb.callHorus(device.serial, 'status')};
+  const paired = {...device, name, paired: true, status: await adb.callXComb(device.serial, 'status')};
   await ensureServer(paired);
   const {options, username} = await connection(paired, {quiet: true});
   // Pin the phone's host key now, over USB, so later connections are checked.
   await run('ssh', [...options, '-o', 'BatchMode=yes', `${username}@127.0.0.1`, 'true'], {stdio: 'ignore'});
   if (status.batteryUnrestricted === false) {
-    log('Tip: allow Horus unrestricted battery use on the phone so Android does not pause it.');
+    log('Tip: allow XComb unrestricted battery use on the phone so Android does not pause it.');
   }
   if (status.sdk >= 31) {
-    log('Tip: Android may kill busy background processes. Run `horus tune` once to lift that limit.');
+    log('Tip: Android may kill busy background processes. Run `xcomb tune` once to lift that limit.');
   }
-  log(`Ready. Open a shell with: horus ssh ${name}`);
+  log(`Ready. Open a shell with: xcomb ssh ${name}`);
   return 0;
 }
 
@@ -275,7 +275,7 @@ async function sshCommand(args) {
 
 /** Runs one command on one or all paired phones; output lines are prefixed. */
 async function execCommand(args) {
-  if (args.rest.length === 0) throw new UsageError('Usage: horus exec <phone|--all> -- <command>');
+  if (args.rest.length === 0) throw new UsageError('Usage: xcomb exec <phone|--all> -- <command>');
   const targets = args.flags.all
     ? (await discover()).filter(device => device.paired)
     : [await resolveDevice(args.positional[0])];
@@ -318,7 +318,7 @@ async function execCommand(args) {
 
 /** scp with `phone:path` on one side. */
 async function cpCommand(args) {
-  if (args.positional.length < 2) throw new UsageError('Usage: horus cp [-r] <src>... <dst>   (use phone:path for the phone side)');
+  if (args.positional.length < 2) throw new UsageError('Usage: xcomb cp [-r] <src>... <dst>   (use phone:path for the phone side)');
   const specs = args.positional.map(parseRemotePath);
   const remoteNames = [...new Set(specs.filter(spec => spec.device).map(spec => spec.device))];
   if (remoteNames.length !== 1) throw new UsageError('Exactly one phone must appear, as phone:path.');
@@ -330,7 +330,7 @@ async function cpCommand(args) {
 
 /** rsync over the same pinned SSH connection. */
 async function syncCommand(args) {
-  if (args.positional.length !== 2) throw new UsageError('Usage: horus sync <src> <dst>   (use phone:path for the phone side)');
+  if (args.positional.length !== 2) throw new UsageError('Usage: xcomb sync <src> <dst>   (use phone:path for the phone side)');
   const specs = args.positional.map(parseRemotePath);
   const remote = specs.filter(spec => spec.device);
   if (remote.length !== 1) throw new UsageError('Exactly one side must be phone:path.');
@@ -349,7 +349,7 @@ async function forwardCommand(args) {
   const remotePort = Number(remoteText);
   const localPort = localText === undefined ? remotePort : Number(localText);
   if (!Number.isInteger(remotePort) || remotePort < 1 || remotePort > 65535 || !Number.isInteger(localPort) || localPort < 1 || localPort > 65535) {
-    throw new UsageError('Usage: horus forward [phone] <phone-port> [local-port]');
+    throw new UsageError('Usage: xcomb forward [phone] <phone-port> [local-port]');
   }
   const device = await resolveDevice(wanted);
   await adb.forward(device.serial, localPort, remotePort);
@@ -357,24 +357,24 @@ async function forwardCommand(args) {
   return 0;
 }
 
-/** Writes ~/.horus/ssh_config so plain `ssh <phone>` and VS Code work. */
+/** Writes ~/.xcomb/ssh_config so plain `ssh <phone>` and VS Code work. */
 async function configCommand(args) {
   const devices = await discover();
   const saved = state.readDevices();
   const files = state.paths();
-  const horusCommand = process.argv[1] ? `${shellQuote(process.execPath)} ${shellQuote(path.resolve(process.argv[1]))}` : 'horus';
+  const xcombCommand = process.argv[1] ? `${shellQuote(process.execPath)} ${shellQuote(path.resolve(process.argv[1]))}` : 'xcomb';
   const known = new Map(devices.filter(device => device.paired).map(device => [device.serial, device.status.username]));
   const blocks = Object.entries(saved).map(([serial, entry]) => sshConfigBlock({
     name: entry.name,
     serial,
-    username: known.get(serial) ?? 'horus',
+    username: known.get(serial) ?? 'xcomb',
     key: files.key,
     knownHosts: files.knownHosts,
-    horusCommand,
+    xcombCommand,
   }));
-  if (blocks.length === 0) throw new UsageError('No phone is paired yet. Run `horus pair` first.');
+  if (blocks.length === 0) throw new UsageError('No phone is paired yet. Run `xcomb pair` first.');
   state.ensureHome();
-  fs.writeFileSync(files.sshConfig, `# Written by \`horus config\`. Re-run it after pairing another phone.\n\n${blocks.join('\n')}`, {mode: 0o600});
+  fs.writeFileSync(files.sshConfig, `# Written by \`xcomb config\`. Re-run it after pairing another phone.\n\n${blocks.join('\n')}`, {mode: 0o600});
   log(`Wrote ${files.sshConfig} with ${blocks.length} phone(s).`);
   const include = `Include ${files.sshConfig}`;
   const userConfig = path.join(os.homedir(), '.ssh', 'config');
@@ -404,7 +404,7 @@ async function proxyCommand(args) {
       socket.pipe(process.stdout);
     });
     socket.on('error', error => {
-      log(`horus proxy: ${error.message}`);
+      log(`xcomb proxy: ${error.message}`);
       resolve(1);
     });
     socket.on('close', () => resolve(0));
@@ -418,7 +418,7 @@ async function statusCommand(args) {
   const lines = [
     ['Phone', `${status.model} (${device.serial}), Android SDK ${status.sdk}`],
     ['Name', device.name ?? '(not paired from this computer)'],
-    ['Horus', status.appVersion],
+    ['XComb', status.appVersion],
     ['Paired', device.paired ? 'yes' : 'no'],
     ['Remote access', status.enabled ? `on, server ${status.state}${status.detail ? ` (${status.detail})` : ''}` : 'off'],
     ['Paired computers', String(status.keys)],
@@ -428,7 +428,7 @@ async function statusCommand(args) {
   const width = Math.max(...lines.map(([title]) => title.length));
   for (const [title, value] of lines) process.stdout.write(`${title.padEnd(width)}  ${value}\n`);
   if (args.flags.log) {
-    const result = await adb.callHorus(device.serial, 'log');
+    const result = await adb.callXComb(device.serial, 'log');
     process.stdout.write(`\n--- server log ---\n${result.log || '(empty)'}\n`);
   }
   return 0;
@@ -437,7 +437,7 @@ async function statusCommand(args) {
 async function unpairCommand(args) {
   const device = await resolveDevice(args.positional[0]);
   const key = state.ensureKey();
-  const result = await adb.callHorus(device.serial, 'unpair', {fingerprint: key.fingerprint});
+  const result = await adb.callXComb(device.serial, 'unpair', {fingerprint: key.fingerprint});
   const devices = state.readDevices();
   delete devices[device.serial];
   state.writeDevices(devices);
@@ -447,8 +447,8 @@ async function unpairCommand(args) {
 
 async function stopCommand(args) {
   const device = await resolveDevice(args.positional[0]);
-  await adb.callHorus(device.serial, 'stop');
-  log(`Remote access is off on ${label(device)}. Turn it back on in Horus → Settings or with \`horus pair\`.`);
+  await adb.callXComb(device.serial, 'stop');
+  log(`Remote access is off on ${label(device)}. Turn it back on in XComb → Settings or with \`xcomb pair\`.`);
   return 0;
 }
 

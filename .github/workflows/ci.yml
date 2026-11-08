@@ -50,7 +50,7 @@ jobs:
           set -e
           cat failure-probe.log
           test "$status" -eq 1
-          grep -q 'HORUS_FORCE_TS_UNIT_FAILURE' failure-probe.log
+          grep -q 'XCOMB_FORCE_TS_UNIT_FAILURE' failure-probe.log
       - name: Host native regressions
         run: bash scripts/native/test-unix-socket-translation.sh
       - name: Retain Jest report

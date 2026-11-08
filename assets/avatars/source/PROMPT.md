@@ -1,4 +1,4 @@
-Generate a set of 9 avatar images for "Horus", an Android app whose logo is a flat Eye of Horus silhouette in lime green. Use your image generation tool once per symbol, then save each result as a PNG in this directory with the exact file name given below. Do not write any other files.
+Generate a set of 9 avatar images for "XComb", an Android app whose logo is a flat Eye of XComb silhouette in lime green. Use your image generation tool once per symbol, then save each result as a PNG in this directory with the exact file name given below. Do not write any other files.
 
 Shared style (identical for every image, so the 9 read as one set):
 - Flat, solid silhouette of a classic Egyptian hieroglyph, in the spirit of carved hieroglyphs: bold, simple, iconic, side profile for animals, the way hieroglyphs are drawn.
@@ -9,7 +9,7 @@ Shared style (identical for every image, so the 9 read as one set):
 - Same visual weight and stroke thickness across all 9.
 
 Symbols and file names:
-1. falcon.png    - Horus falcon, standing in profile (hieroglyph G5)
+1. falcon.png    - XComb falcon, standing in profile (hieroglyph G5)
 2. ibis.png      - sacred ibis of Thoth, standing in profile (G26)
 3. jackal.png    - recumbent jackal of Anubis on a shrine-less plain base line (E15)
 4. cat.png       - seated cat of Bastet in profile, tall ears
@@ -19,11 +19,11 @@ Symbols and file names:
 8. papyrus.png   - papyrus umbel on stem (M13)
 9. sun-disk.png  - sun disk of Ra: circle with a central dot, optionally small uraeus (N5)
 
-Do not draw an Eye of Horus anywhere.
+Do not draw an Eye of XComb anywhere.
 When done, print the list of saved files.
 
 ## XComb refresh
-Avatars are now original gold-gradient glyphs on a dark disc (SVG sources in `source/svg/`, rendered to PNG at 96/192/288 px). No Eye-of-Horus imagery.
+Avatars are now original gold-gradient glyphs on a dark disc (SVG sources in `source/svg/`, rendered to PNG at 96/192/288 px). No Eye-of-XComb imagery.
 
 ## XComb gold-mech set (current)
 Avatars are the supplied gold mech-animal illustrations (Gemini sparkle watermark painted out). Ids are kept for profile compatibility: sun-disk=Dragon, papyrus=Wolf, lotus=Tiger, ibis, cat, falcon, scarab, cobra, jackal.

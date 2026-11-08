@@ -19,8 +19,8 @@ import {
 } from '../src/files/fileExplorer';
 
 const marker = 'qtest';
-const begin = `HORUS_FILE_QUERY_${marker}_BEGIN`;
-const end = `HORUS_FILE_QUERY_${marker}_END`;
+const begin = `XCOMB_FILE_QUERY_${marker}_BEGIN`;
+const end = `XCOMB_FILE_QUERY_${marker}_END`;
 
 type FakeRuntime = {
   spec: Spec;
@@ -81,7 +81,7 @@ function currentQueryMarker(runtime: FakeRuntime): string {
     {command: string},
   ]>;
   const command = calls[calls.length - 1]?.[0].command ?? '';
-  return command.match(/HORUS_FILE_QUERY_(q[A-Za-z0-9-]+)_BEGIN/)?.[1] ?? 'missing';
+  return command.match(/XCOMB_FILE_QUERY_(q[A-Za-z0-9-]+)_BEGIN/)?.[1] ?? 'missing';
 }
 
 function shellQuoteForOuterCommand(value: string): string {
@@ -110,7 +110,7 @@ describe('guest file explorer protocol', () => {
     expect(homeCommand).toContain('[ -L "$entry" ]');
     expect(workspaceCommand).toContain('/workspace');
     expect(workspaceCommand).toContain('head -c 65537');
-    expect(workspaceCommand).toContain('HORUS_FILE_QUERY_qtest_BEGIN');
+    expect(workspaceCommand).toContain('XCOMB_FILE_QUERY_qtest_BEGIN');
     expect(() => buildListGuestDirectoryCommand('home', ['../escape'], marker)).toThrow();
   });
 
@@ -217,9 +217,9 @@ describe('guest file explorer PTY queries', () => {
     expect((runtime.spec.startSession as unknown as jest.Mock)).toHaveBeenCalledWith(expect.objectContaining({toolchain: 'shell', command: expect.stringContaining('/workspace'), countsAgainstSessionLimit: false}));
     const queryMarker = currentQueryMarker(runtime);
     runtime.emit(outputEvent('s-1-1', 1, [
-      `HORUS_FILE_QUERY_${queryMarker}_BEGIN`,
+      `XCOMB_FILE_QUERY_${queryMarker}_BEGIN`,
       `${encodeTestBase64('.hidden')}\tfile\t5`,
-      `HORUS_FILE_QUERY_${queryMarker}_END|ok|0`,
+      `XCOMB_FILE_QUERY_${queryMarker}_END|ok|0`,
     ].join('\n')));
     runtime.emit({type: 'exit', sessionId: 's-1-1', reason: 'exited', exitCode: 0});
 
@@ -237,9 +237,9 @@ describe('guest file explorer PTY queries', () => {
     const text = 'safe preview\n';
     const size = new TextEncoder().encode(text).byteLength;
     runtime.emit(outputEvent('s-1-1', 1, [
-      `HORUS_FILE_QUERY_${queryMarker}_BEGIN`,
+      `XCOMB_FILE_QUERY_${queryMarker}_BEGIN`,
       `DATA|${encodeTestBase64(text)}`,
-      `HORUS_FILE_QUERY_${queryMarker}_END|ok|${size}`,
+      `XCOMB_FILE_QUERY_${queryMarker}_END|ok|${size}`,
     ].join('\n')));
     runtime.emit({type: 'exit', sessionId: 's-1-1', reason: 'exited', exitCode: 0});
     await expect(resultPromise).resolves.toEqual({kind: 'success', content: text, sizeBytes: size});
@@ -250,8 +250,8 @@ describe('guest file explorer PTY queries', () => {
     await flushPromises();
     const missingMarker = currentQueryMarker(missingRuntime);
     missingRuntime.emit(outputEvent('s-1-1', 1, [
-      `HORUS_FILE_QUERY_${missingMarker}_BEGIN`,
-      `HORUS_FILE_QUERY_${missingMarker}_END|not_found|0`,
+      `XCOMB_FILE_QUERY_${missingMarker}_BEGIN`,
+      `XCOMB_FILE_QUERY_${missingMarker}_END|not_found|0`,
     ].join('\n')));
     missingRuntime.emit({type: 'exit', sessionId: 's-1-1', reason: 'exited', exitCode: 0});
     await expect(missingPromise).resolves.toEqual({kind: 'error', errorCode: 'not_found'});
@@ -410,8 +410,8 @@ describe('guest file explorer native direct-storage queries', () => {
     expect(pty.spec.startSession as unknown as jest.Mock).toHaveBeenCalledTimes(1);
     const queryMarker = currentQueryMarker(pty);
     pty.emit(outputEvent('s-1-1', 1, [
-      `HORUS_FILE_QUERY_${queryMarker}_BEGIN`,
-      `HORUS_FILE_QUERY_${queryMarker}_END|ok|0`,
+      `XCOMB_FILE_QUERY_${queryMarker}_BEGIN`,
+      `XCOMB_FILE_QUERY_${queryMarker}_END|ok|0`,
     ].join('\n')));
     pty.emit({type: 'exit', sessionId: 's-1-1', reason: 'exited', exitCode: 0});
     await expect(resultPromise).resolves.toEqual({kind: 'success', entries: [], truncated: false, hiddenInvalidNameCount: 0});
@@ -423,7 +423,7 @@ describe('guest folder export to Downloads', () => {
     const exportMock = jest.fn(async (request: {requestId: string; root: string; path: string[]}) => ({
       requestId: request.requestId,
       status: 'success',
-      destination: 'Download/Horus/src-20260928-143205',
+      destination: 'Download/XComb/src-20260928-143205',
       fileCount: 3,
       byteCount: 42,
       skippedCount: 1,
@@ -432,7 +432,7 @@ describe('guest folder export to Downloads', () => {
 
     await expect(exportGuestDirectory('workspace', ['src'], runtime)).resolves.toEqual({
       kind: 'success',
-      destination: 'Download/Horus/src-20260928-143205',
+      destination: 'Download/XComb/src-20260928-143205',
       fileCount: 3,
       byteCount: 42,
       skippedCount: 1,

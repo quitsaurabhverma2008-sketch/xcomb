@@ -12,7 +12,7 @@ type NativeBackgroundModule = Readonly<{
 }>;
 
 function nativeModule(): NativeBackgroundModule | null {
-  const module = NativeModules.HorusDevice as Partial<NativeBackgroundModule> | undefined;
+  const module = NativeModules.XCombDevice as Partial<NativeBackgroundModule> | undefined;
   if (
     module === undefined ||
     typeof module.getBackgroundPermissions !== 'function' ||

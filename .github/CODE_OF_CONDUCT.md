@@ -1,8 +1,8 @@
-# Horus community code of conduct
+# XComb community code of conduct
 
 ## Participation
 
-Everyone participating in Horus Issues, Discussions, pull requests, or other
+Everyone participating in XComb Issues, Discussions, pull requests, or other
 project-managed spaces is expected to help make them welcoming and useful.
 This applies to maintainers and contributors alike, and when representing the
 project publicly.
@@ -23,7 +23,7 @@ connected to project participation.
 
 For content or conduct that violates GitHub's rules, use GitHub's
 [reporting tools](https://docs.github.com/en/communities/maintaining-your-safety-on-github/reporting-abuse-or-spam).
-Reporting to GitHub goes to GitHub, not to the Horus maintainers.
+Reporting to GitHub goes to GitHub, not to the XComb maintainers.
 
 For a project moderation concern that can safely be discussed publicly, leave a
 brief request for maintainer attention in the relevant thread. Describe the
@@ -31,7 +31,7 @@ behavior and link the relevant content without repeating harmful material.
 Do not post personal details or sensitive evidence. You do not need to engage
 with someone who is harassing you.
 
-Horus does not currently publish a dedicated private moderation contact. If a
+XComb does not currently publish a dedicated private moderation contact. If a
 report needs privacy, use GitHub's reporting tools rather than a public issue or
 discussion. A private maintainer reporting channel should be established before
 this policy is described as offering confidential project reporting. Security

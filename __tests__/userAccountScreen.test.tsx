@@ -3,7 +3,7 @@ import ReactTestRenderer from 'react-test-renderer';
 import type {ProfileUser} from '../src/profile/profileStore';
 import {UserAccountScreen} from '../src/ui/UserAccountScreen';
 
-const ALPINE: ProfileUser = {distro: 'alpine', username: 'horus', avatar: 'falcon'};
+const ALPINE: ProfileUser = {distro: 'alpine', username: 'xcomb', avatar: 'falcon'};
 const DEBIAN: ProfileUser = {distro: 'debian', username: 'deb', avatar: 'ibis'};
 
 async function render(element: React.ReactElement) {
@@ -36,8 +36,8 @@ describe('UserAccountScreen', () => {
   test('shows the signed-in user and offers to add the missing distribution', async () => {
     const onAddUser = jest.fn();
     const {renderer, find} = await render(<UserAccountScreen onAddUser={onAddUser} onBack={() => undefined} user={ALPINE} users={[ALPINE]} />);
-    expect(find('user-account-name')[0].props.children).toBe('horus');
-    expect(find('user-account-home')[0].props.children).toBe('  ·  /home/horus');
+    expect(find('user-account-name')[0].props.children).toBe('xcomb');
+    expect(find('user-account-home')[0].props.children).toBe('  ·  /home/xcomb');
     await ReactTestRenderer.act(async () => { find('user-account-add-user')[0].props.onPress(); });
     expect(onAddUser).toHaveBeenCalledTimes(1);
 

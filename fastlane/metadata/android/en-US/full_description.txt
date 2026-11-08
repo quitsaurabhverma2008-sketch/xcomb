@@ -9,7 +9,8 @@
 <li><b>A terminal you can use with your thumbs.</b> Swipe typing works, links open with a tap, and a key bar above the keyboard adds Esc, Tab, arrows, paste, and one-shot Ctrl and Alt.</li>
 <li><b>Your projects.</b> Create a folder, clone any HTTPS or SSH Git URL, or sign in to GitHub and pick one of your repositories.</li>
 <li><b>Up to four sessions at once</b>, each with its own notification.</li>
-<li><b>A file browser</b> for checking what the agents changed, with text previews and a button that copies any folder to Download/XComb.</li>
+<li><b>A full file manager.</b> Browse phone storage, your Linux home, the shared workspace and Favorites. Search, sort, multi-select, copy, cut, paste, rename, delete, share, compress to zip, unzip, or import files from the phone picker. Config folders open in the same manager, locked to that tool's directory.</li>
+<li><b>Phone storage for your agents.</b> Grant All files access and XComb binds /sdcard into Linux, so Claude Code, Codex, OpenCode, Gemini CLI and FreeBuff can read and write the files you choose.</li>
 <li><b>A lock.</b> An optional password protects the app, and the workspace locks itself after 15 minutes in the background.</li>
 <li><b>Optional USB access from a computer.</b> Pair a computer over USB to get an SSH shell on the phone. It is off by default, listens only on the phone's loopback (reached through adb), and accepts only paired keys.</li>
 <li><b>A focused yellow interface.</b> A warm black workspace, bright yellow accent, official agent marks, and the XComb icon and avatar set.</li>
@@ -18,7 +19,8 @@
 <p><b>Things to know</b></p>
 <ul>
 <li>XComb needs an ARM64 (arm64-v8a) phone running Android 7.0 or newer.</li>
-<li>Alpine, its packages and the agents download from their upstream servers when you first use them; mirrors are available in Settings. Claude Code and Codex need accounts with their providers. Claude Code is proprietary, while Codex (Apache-2.0), OpenCode, Gemini CLI, FreeBuff and the shell have their own upstream licenses.</li>
+<li>Alpine, its packages and the agents download from their servers when you first use them; mirrors are available in Settings. Claude Code and Codex need accounts with their providers. Claude Code is proprietary, while Codex (Apache-2.0), OpenCode, Gemini CLI, FreeBuff and the shell have their own licenses.</li>
 <li>Android's app sandbox is the only security boundary. PRoot emulates user IDs but gives no kernel isolation, so don't run code you don't trust.</li>
-<li>The Android application ID is unchanged from the fork base. Uninstall an older build before installing XComb, because each CI build uses a fresh signing key.</li>
+<li>This build uses the new application ID com.scariflabs.xcomb, so it is a fresh install. The older app stays separate and its data is not migrated. Uninstall an older build before installing XComb, because each CI build uses a fresh signing key.</li>
+<li>All files access is optional. Android/data and Android/obb remain restricted even after it is granted. Archive support is zip only; 7z and custom compression are not included.</li>
 </ul>

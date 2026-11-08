@@ -10,7 +10,7 @@ const jestCommand = process.platform === 'win32' ? 'jest.cmd' : path.join('node_
 const directory = fs.mkdtempSync(path.join('__tests__', 'failure-probe-'));
 try {
   const fixture = path.join(directory, 'probe.test.js');
-  fs.writeFileSync(fixture, "test('HORUS_FORCE_TS_UNIT_FAILURE', () => { expect(true).toBe(false); });\n");
+  fs.writeFileSync(fixture, "test('XCOMB_FORCE_TS_UNIT_FAILURE', () => { expect(true).toBe(false); });\n");
   const result = spawnSync(jestCommand, ['--runInBand', '--watchAll=false', '--runTestsByPath', fixture], {
     stdio: 'inherit',
   });
